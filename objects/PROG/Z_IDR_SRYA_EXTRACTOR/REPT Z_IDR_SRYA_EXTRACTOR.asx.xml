@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?><asx:abap xmlns:asx="http://www.sap.com/abapxml">
+<asx:values>
+<TEXTPOOLT>
+<TEXTPOOLT>
+<ID>R</ID>
+<KEY></KEY>
+<LANG>S</LANG>
+<ENTRY>IDR : Extractor SRYA</ENTRY>
+<LENGTH>20</LENGTH>
+</TEXTPOOLT>
+<TEXTPOOLT>
+<ID>S</ID>
+<KEY>P_COMP</KEY>
+<LANG>S</LANG>
+<ENTRY>        Componente</ENTRY>
+<LENGTH>19</LENGTH>
+</TEXTPOOLT>
+<TEXTPOOLT>
+<ID>S</ID>
+<KEY>P_FILE</KEY>
+<LANG>S</LANG>
+<ENTRY>        Fichero de uso</ENTRY>
+<LENGTH>22</LENGTH>
+</TEXTPOOLT>
+<TEXTPOOLT>
+<ID>S</ID>
+<KEY>P_FILEG1</KEY>
+<LANG>S</LANG>
+<ENTRY>        Fichero de transacciones</ENTRY>
+<LENGTH>32</LENGTH>
+</TEXTPOOLT>
+<TEXTPOOLT>
+<ID>S</ID>
+<KEY>P_FILER</KEY>
+<LANG>S</LANG>
+<ENTRY>        Fichero volcado AGR_ROLES</ENTRY>
+<LENGTH>33</LENGTH>
+</TEXTPOOLT>
+<TEXTPOOLT>
+<ID>S</ID>
+<KEY>P_FILER2</KEY>
+<LANG>S</LANG>
+<ENTRY>        Fichero volcado AGR_DEFINE</ENTRY>
+<LENGTH>34</LENGTH>
+</TEXTPOOLT>
+<TEXTPOOLT>
+<ID>S</ID>
+<KEY>P_FILER3</KEY>
+<LANG>S</LANG>
+<ENTRY>        Fichero volcado AGR_1251</ENTRY>
+<LENGTH>32</LENGTH>
+</TEXTPOOLT>
+<TEXTPOOLT>
+<ID>S</ID>
+<KEY>P_FILER4</KEY>
+<LANG>S</LANG>
+<ENTRY>        Fichero volcado AGR_PROF</ENTRY>
+<LENGTH>32</LENGTH>
+</TEXTPOOLT>
+<TEXTPOOLT>
+<ID>S</ID>
+<KEY>P_FILER5</KEY>
+<LANG>S</LANG>
+<ENTRY>        Fichero volcado USR01</ENTRY>
+<LENGTH>29</LENGTH>
+</TEXTPOOLT>
+<TEXTPOOLT>
+<ID>S</ID>
+<KEY>P_GENE</KEY>
+<LANG>S</LANG>
+<ENTRY>        Grabar fichero general</ENTRY>
+<LENGTH>30</LENGTH>
+</TEXTPOOLT>
+<TEXTPOOLT>
+<ID>S</ID>
+<KEY>P_PERIOS</KEY>
+<LANG>S</LANG>
+<ENTRY>        Fecha</ENTRY>
+<LENGTH>13</LENGTH>
+</TEXTPOOLT>
+<TEXTPOOLT>
+<ID>S</ID>
+<KEY>P_PERIOT</KEY>
+<LANG>S</LANG>
+<ENTRY>        Periodo de tiempo</ENTRY>
+<LENGTH>25</LENGTH>
+</TEXTPOOLT>
+<TEXTPOOLT>
+<ID>S</ID>
+<KEY>P_ROLE</KEY>
+<LANG>S</LANG>
+<ENTRY>        Grabar fichero de Roles</ENTRY>
+<LENGTH>31</LENGTH>
+</TEXTPOOLT>
+<TEXTPOOLT>
+<ID>S</ID>
+<KEY>P_SUMMAR</KEY>
+<LANG>S</LANG>
+<ENTRY>        Solo Resumen</ENTRY>
+<LENGTH>20</LENGTH>
+</TEXTPOOLT>
+<TEXTPOOLT>
+<ID>S</ID>
+<KEY>P_USE</KEY>
+<LANG>S</LANG>
+<ENTRY>        Grabar fichero de uso</ENTRY>
+<LENGTH>29</LENGTH>
+</TEXTPOOLT>
+</TEXTPOOLT>
+</asx:values>
+</asx:abap>
