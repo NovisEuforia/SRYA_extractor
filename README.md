@@ -46,7 +46,7 @@ Se recomienda el lanzamiento en modo batch ya que debido al volumen puede sobrep
   El report tiene 3 partes difenreciadas:  **USO, Roles y Transacciones**. Debido a lo heterogeneo y voluminoso de la información y a extraer, el report deposita  la información extraída en un directorio del servidor de aplicación.
   
   El report se ejecuta directamente desde la **SE38**:
-![Pantalla de selección](https://raw.githubusercontent.com/NovisEuforia/SRYA_extractor/master/files/Z_IDR_SRYA_EXTRACTOR_DYNP1000.png?token=AOMOIWWKO32ZTFPJ4RZDEJK62QZFQ)  
+![Pantalla de selección](https://github.com/NovisEuforia/SRYA_extractor/blob/master/files/Z_IDR_SRYA_EXTRACTOR_DYNP1000.png)  
   
   
 La captura de la izquierda muestra la pantalla de selección del report sin importar los elementos de texto y a la derecha como sería con los elementos de texto importados ![Fichero textos](https://github.com/NovisEuforia/SRYA_extractor/blob/master/objects/PROG/Z_IDR_SRYA_EXTRACTOR/REPT%20Z_IDR_SRYA_EXTRACTOR.asx.xml).
