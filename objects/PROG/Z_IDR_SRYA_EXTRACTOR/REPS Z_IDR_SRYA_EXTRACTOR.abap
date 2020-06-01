@@ -28,7 +28,7 @@
 REPORT z_idr_srya_extractor.
 ************************************************************************
 *  2020.03.19 : SRYA EXTRACTOR V1.0 : First Release
-*  2020.04.03 : SRYA EXTRACTOR V1.1 : Minor changes
+*  2020.04.03 : SRYA EXTRACTOR V1.1 : Miscellaneous
 *  2020.05.19 : SRYA EXTRACTOR V1.2 : TRXS extractrion
 ************************************************************************
 *-$- TYPES
@@ -125,6 +125,8 @@ DATA: lw_opsystem TYPE opsystem,
       lw_file     TYPE t_file,
       lt_files    TYPE STANDARD TABLE OF t_file.
 
+DATA : lw_line TYPE string,
+       lt_line TYPE STANDARD TABLE OF string.
 
 *-$-SELECTION SCREEN
 SELECTION-SCREEN BEGIN OF BLOCK use WITH FRAME TITLE title0.
@@ -269,8 +271,6 @@ IF p_use IS NOT INITIAL.
    IF sy-subrc <> 0.
       MESSAGE 'No data selected'(001) TYPE 'E'.
    ENDIF.
-*AQUI --> Ver qué mas info podemos obtener
-*Generar fichros
 
 LOOP AT lt_ucode INTO lw_ucode.
    lw_extract01-tasktype = lw_ucode-tasktype.
@@ -283,13 +283,8 @@ LOOP AT lt_ucode INTO lw_ucode.
     tasktyperaw = lw_ucode-tasktype
   RECEIVING
     tasktype    = lw_extract01-tasktdesc.
-
-
-
-*  WRITE: / lw_extract01-tasktype,';', lw_extract01-account,';', lw_extract01-tasktdesc,';', lw_extract01-entry_id , ';', lw_extract01-count.
   APPEND lw_extract01 TO lt_extract01.
 ENDLOOP.
-
 
 OPEN DATASET p_file FOR OUTPUT IN TEXT MODE ENCODING DEFAULT.
                                           "SKIPPING BYTE-ORDER MARK.
@@ -314,7 +309,6 @@ CLOSE DATASET p_file.
 WRITE: 'Fichero' ,p_file ,  ' copiado correctamente'.
 ENDIF.
 
-
 IF p_role IS NOT INITIAL.
 
 * -TABLE AGR_USERS---------------------------------------------------
@@ -335,6 +329,7 @@ CALL METHOD cl_abap_container_utilities=>fill_container_c
 IF sy-subrc <> 0.
   CONTINUE.
 ENDIF.
+
 TRANSFER line_file01 TO p_filer.
 
 CLEAR line_file01.
@@ -344,7 +339,6 @@ ENDLOOP.
 CLOSE DATASET p_filer.
 CLEAR lt_agr_user[].
 WRITE: / 'Fichero' ,p_filer ,  ' copiado correctamente'.
-
 
 * -TABLE AGR_DEFINE------------------------------------------------
   SELECT * FROM agr_DEFINE INTO TABLE lt_agr_define.
@@ -459,18 +453,13 @@ ENDIF.
 
 IF p_gene IS NOT INITIAL.
 
-* -TABLE TSTCV s CSV---------------------------------------------------
+* -TABLE TSTCV - CSV---------------------------------------------------
 
   SELECT * FROM tstc  INTO TABLE lt_tstc.
   SELECT * FROM tstcv INTO TABLE lt_tstcv WHERE sprsl = p_spras.
 
-  SELECT SINGLE * FROM tstcv INTO lw_tstcv.
-
-
 OPEN DATASET p_fileg1 FOR OUTPUT IN TEXT MODE ENCODING DEFAULT.
 
-DATA : lw_line TYPE string,
-       lt_line TYPE STANDARD TABLE OF string.
 
 LOOP AT lt_tstc INTO lw_tstc.
   CLEAR: lw_trxs, lw_tstcv.
@@ -485,7 +474,7 @@ LOOP AT lt_tstc INTO lw_tstc.
   APPEND lw_trxs TO lt_trxs.
 
   CONCATENATE: lw_trxs-tcode ';' lw_trxs-progname ';' lw_trxs-description INTO lw_line.
-  APPEND lw_line TO     lt_line.
+  APPEND lw_line TO lt_line.
 
 ENDLOOP.
 
