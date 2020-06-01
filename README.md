@@ -25,7 +25,7 @@ Según cualquiera de las siguientes opciones:
   
 2. Mediante Importación de **orden de transporte:**
 
-   1. Se descarga el fichero XXX XXX ubicado en : hyperlink
+   1. Se descarga el fichero ![901177.S4H.zip](https://github.com/NovisEuforia/SRYA_extractor/blob/master/ChangeRequest/901177.S4H.zip), ubicado en la carpeta **Change Request**
    2. Se importa la orden en _TMS - Transport Management System_ - _Transacción STMS_
    3. Se despliega la orden el entorno en donde se va a realizar la extracción
    
