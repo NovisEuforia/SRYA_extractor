@@ -43,7 +43,7 @@ Los requiistos para poder ejecutar el report son :
   
 Se recomienda el lanzamiento en modo batch ya que debido al volumen puede sobrepasar el timeout de diálogo. 
   
-  El report tiene 3 partes difenreciadas:  **USO, Roles y Transacciones**. Debido a lo heterogeneo y voluminoso de la información y a extraer, el report deposita  la información extraída en un directorio del servidor de aplicación.
+  El report tiene 3 partes difenreciadas:  **USO, Roles y Transacciones**. Debido a lo heterogeneo y voluminoso de la información a extraer, el report deposita  la información extraída en un directorio del servidor de aplicación.
   
   El report se ejecuta directamente desde la **SE38**:
 ![Pantalla de selección](https://github.com/NovisEuforia/SRYA_extractor/blob/master/files/Z_IDR_SRYA_EXTRACTOR_DYNP1000.png)  
@@ -63,7 +63,7 @@ Lo normal será extraer los datos de uso del último mes completo, para ello se 
 * P_FILE                       = Se genera automáticamente  - _Nombre del fichero generado_            
 
 
-ELa ejecución depositará un fichero en el servidor de aplicación ( se puede acceder por la **transacción AL11**), en el _directorio TMP_ con el nombre autogenerado _"<Use_TOTAL_M_<fecha>.txt>"_.
+La ejecución depositará un fichero en el servidor de aplicación ( se puede acceder por la **transacción AL11**), en el _directorio TMP_ con el nombre autogenerado _"<Use_TOTAL_M_<fecha>.txt>"_.
 
  Extracción de **Roles y usuarios**. 
 
