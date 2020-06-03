@@ -158,8 +158,7 @@ SELECTION-SCREEN COMMENT /10(50) l_instr.
 
 
 AT SELECTION-SCREEN.
-  CLEAR p_file.
-    CONCATENATE:  '/tmp/Use_' p_comp '_' p_periot '_' p_perios'.txt' INTO p_file.
+
 
 *-$- SELSCR
 INITIALIZATION.
@@ -170,6 +169,9 @@ INITIALIZATION.
   GET TIME STAMP FIELD ts.
   s_ts = ts.
   CONDENSE s_ts.
+
+* CLEAR p_file.
+*  CONCATENATE:  '/tmp/Use_' p_comp '_' p_periot '_' p_perios'.txt' INTO p_file.
 
   CONCATENATE   '/tmp/Use_' p_comp '_' p_periot '_' p_perios'.txt' INTO p_file.
   lw_file-file = p_file. APPEND lw_file TO lt_files.
