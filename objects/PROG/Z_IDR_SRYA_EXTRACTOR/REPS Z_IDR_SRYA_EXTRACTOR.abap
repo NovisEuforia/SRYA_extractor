@@ -188,7 +188,7 @@ INITIALIZATION.
   CONCATENATE   '/tmp/Gen_TSTC_'       s_ts '.txt' INTO p_fileg1.
   lw_file-file = p_fileg1. APPEND lw_file TO lt_files.
 
-*  Condense: p_file, p_filer.
+*  Condense: p_file, p_filer
 
 SELECT SINGLE * FROM opsystem INTO lw_opsystem WHERE opsys = sy-opsys.
 
