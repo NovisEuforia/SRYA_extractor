@@ -192,7 +192,11 @@ INITIALIZATION.
 
 SELECT SINGLE * FROM opsystem INTO lw_opsystem WHERE opsys = sy-opsys.
 
+
+  lw_opsystem-filesys = to_upper( lw_opsystem-filesys ).
+
   IF lw_opsystem-filesys EQ l_lifesWin.
+
    LOOP AT lt_files INTO lw_file.
      CREATE OBJECT lc_winpath
         EXPORTING
@@ -215,7 +219,9 @@ SELECT SINGLE * FROM opsystem INTO lw_opsystem WHERE opsys = sy-opsys.
            p_fileg1 = lc_winpath->get_winpath( ).
        ENDCASE.
 
+      FREE lc_winpath.
    ENDLOOP.
+
   ENDIF.
 
 l_instr = 'Copyright © 2020 Novis Euforia'.
