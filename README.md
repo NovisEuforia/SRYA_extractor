@@ -60,7 +60,7 @@ Los requisitos para poder ejecutar el report son :
   Debido a lo heterogeneo y ocasionalmente voluminoso de la información a extraer, el report deposita la información extraída en un directorio del servidor de aplicación permitiendo así la ejecución del report en modo backgorund.
   
   El report se ejecuta directamente desde la **SE38**:
-![Pantalla de selección](https://github.com/NovisEuforia/SRYA_extractor/blob/master/files/Z_IDR_SRYA_EXTRACTOR_DYNP1000.png?raw=true)  
+![Pantalla de selección](https://github.com/NovisEuforia/SRYA_extractor/blob/master/files/Z_IDR_SRYA_EXTRACTOR_1000.png?raw=true)  
     
  **Pantalla de Selección**
  
