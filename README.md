@@ -46,10 +46,15 @@ Los requisitos para poder ejecutar el report son :
    
   El report tiene 6 partes diferenciadas:  
 **1.Customer**: información del cliente.
+
 **2.Uso**: información de uso del sistema.
+
 **3.Roles & Ususarios**: información de los Roles y Usuarios.
+
 **4.licencias**:información sobre el tipo de licencias de los usuarios.
+
 **5.General**: información general.
+
 **6.Anonimización**: Información sobre los usuarios anonimizados.
 
   Debido a lo heterogeneo y ocasionalmente voluminoso de la información a extraer, el report deposita la información extraída en un directorio del servidor de aplicación permitiendo así la ejecución del report en modo backgorund.
