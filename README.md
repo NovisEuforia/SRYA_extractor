@@ -113,6 +113,5 @@ Al marcar el parámetro **_User Alias Generation_**  - se genera un fichero que 
 
 Al marcar el parámetro **_User Alias Generation_**  además se anonimizan todos los ficheros donde aparezca el nombre del usuario, la forma de realizar esta anonimización es sustituyendo el código de usario por un alias autogenerado en todos los ficheros donde aparece el código de usuario: (**_Use Data File , AGR Roles Data File y USER General Data File_**). El fichero _Alias Data File_ tiene el _matching_ del Código de usuario y el Alias. Este fichero no debe enviarse, se lo debe quedar el cliente para posteriormente poder identificar los usuarios en base a los Alias que son los únicos que apareceran en el informe. De esta forma Novis Euforia solo tiene acceso a información de los alias.
 
-## Enviío de los resultados del Scan
-
+## Enviío de los resultados del Scan.
 Una vez terminado el scan con todos los ficheros hay que descargarlos del servidor _**transacción CG3Y**_ , zippearlos y enviarlos según el modo que se haya indicado.
