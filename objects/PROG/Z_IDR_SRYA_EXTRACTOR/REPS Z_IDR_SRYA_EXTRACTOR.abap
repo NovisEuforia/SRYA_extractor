@@ -29,7 +29,11 @@ REPORT z_idr_srya_extractor.
 ************************************************************************
 *  2020.03.19 : SRYA EXTRACTOR V1.0 : First Release
 *  2020.04.03 : SRYA EXTRACTOR V1.1 : Miscellaneous
-*  2020.05.19 : SRYA EXTRACTOR V1.2 : TRXS extractrion
+*  2020.05.19 : SRYA EXTRACTOR V1.2 : TRXS extraction
+*  2020.07.08 : SRYA EXTRACTOR V1.2a: User code shake
+*  2020.07.09 : SRYA EXTRACTOR V1.2b: File name normalization
+*  2020.07.08 : SRYA EXTRACTOR V1.2b: Selection Screen text-elements
+*                                     included un source-code
 ************************************************************************
 *-$- TYPES
 TYPES: BEGIN OF t_extract01,
@@ -55,6 +59,7 @@ TYPES: BEGIN OF t_trxs,
        END OF t_trxs.
 
 TYPES:BEGIN OF t_user,
+        mandt         TYPE symandt,
         bname         TYPE xubname,
         Persnum       TYPE ad_persnum,
         name_last     TYPE ad_namelas,
@@ -73,6 +78,14 @@ TYPES: BEGIN OF t_ulock,
          ltime TYPE xultime,
          uflag TYPE xuuflag,
        END OF t_ulock.
+
+TYPES: BEGIN OF t_ushake,
+         bname TYPE xubname,
+         alias TYPE xubname,
+       END OF t_ushake.
+
+
+TYPES: tt_ushake TYPE STANDARD TABLE OF t_ushake.
 
 TYPES: BEGIN OF t_file,
          file TYPE  localfile,
@@ -93,6 +106,24 @@ CLASS lcl_winpath DEFINITION.
 
 ENDCLASS.
 
+CLASS lcl_ushaker DEFINITION.
+  PUBLIC SECTION.
+
+
+    METHODS constructor.
+    METHODS shake RETURNING VALUE(alias) TYPE xubname.
+    METHODS get_alias IMPORTING bname TYPE xubname EXPORTING alias TYPE xubname.
+    METHODS get_alias_table EXPORTING lt_ushake TYPE tt_ushake .
+
+  PRIVATE SECTION.
+
+    DATA: l_prefix   TYPE string,
+          l_sufix(5) TYPE n,
+          last_alias TYPE xubname.
+    DATA: lt_ushake   TYPE tt_ushake.
+
+ENDCLASS.
+*$-
 CLASS lcl_winpath IMPLEMENTATION.
   METHOD constructor.
 
@@ -109,6 +140,47 @@ CLASS lcl_winpath IMPLEMENTATION.
 
 ENDCLASS.
 
+CLASS lcl_ushaker IMPLEMENTATION.
+
+  METHOD constructor.
+
+    FIELD-SYMBOLS: <fs_ushake> TYPE t_ushake.
+
+    CONCATENATE  sy-sysid sy-mandt INTO me->l_prefix.
+    me->l_sufix  = '00000'.
+    SELECT  bname FROM usr02  INTO  TABLE me->lt_ushake.
+    LOOP AT lt_ushake ASSIGNING <fs_ushake>.
+      <fs_ushake>-alias = me->shake( ).
+    ENDLOOP.
+
+  ENDMETHOD.
+
+  METHOD shake.
+
+    me->l_sufix = me->l_sufix + 1.
+    CONCATENATE me->l_prefix '_' me->l_sufix(5) INTO alias.
+
+  ENDMETHOD.
+
+  METHOD get_alias.
+    DATA: lw_ushake TYPE t_ushake.
+
+    alias = bname.
+
+    READ TABLE me->lt_ushake INTO lw_ushake WITH KEY bname = bname.
+    IF sy-subrc = 0.
+      alias = lw_ushake-alias.
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD get_alias_table.
+
+    lt_ushake = me->lt_ushake.
+
+  ENDMETHOD.
+
+ENDCLASS.
+
 *-$- DATA
 DATA: lt_ucode     TYPE STANDARD TABLE OF swncaggusertcode,
       lw_ucode     TYPE swncaggusertcode,
@@ -118,11 +190,13 @@ DATA: lt_ucode     TYPE STANDARD TABLE OF swncaggusertcode,
       lw_extract02 TYPE  t_extract02.
 DATA: lw_agr_user   TYPE agr_users,
       lw_agr_define TYPE agr_define,
+      lW_agr_texts  TYPE agr_texts,
       lw_agr_1251   TYPE agr_1251,
       lw_agr_prof   TYPE agr_prof,
       lw_usr01      TYPE usr01,
       lt_agr_user   TYPE STANDARD TABLE OF agr_users,
       lt_agr_define TYPE STANDARD TABLE OF agr_define,
+      lt_agr_texts  TYPE STANDARD TABLE OF agr_texts,
       lt_agr_1251   TYPE STANDARD TABLE OF agr_1251,
       lt_agr_prof   TYPE STANDARD TABLE OF agr_prof,
       lt_username   TYPE STANDARD TABLE OF v_username,
@@ -131,6 +205,8 @@ DATA: lw_agr_user   TYPE agr_users,
       lw_user       TYPE t_user,
       lt_ulock      TYPE STANDARD TABLE OF t_ulock,
       lw_ulock      TYPE t_ulock,
+      lt_ushake     TYPE STANDARD TABLE OF t_ushake,
+      lw_ushake     TYPE t_ushake,
       lt_tstcv      TYPE STANDARD TABLE OF tstcv,
       lw_tstcv      TYPE tstcv,
       lt_tstc       TYPE STANDARD TABLE OF tstc,
@@ -141,8 +217,10 @@ DATA: lw_agr_user   TYPE agr_users,
 DATA: line_file01 TYPE string,
       pname(80).
 
-DATA: ts   TYPE timestamp,
-      s_ts TYPE string.
+DATA: ts        TYPE timestamp,
+      s_ts      TYPE string,
+      s_st_aux  TYPE string,
+      s_st_aux2 TYPE string.
 
 DATA: lw_opsystem TYPE opsystem,
       l_lifesWin  TYPE filesys_d VALUE 'WINDOWS NT',
@@ -150,10 +228,21 @@ DATA: lw_opsystem TYPE opsystem,
       lw_file     TYPE t_file,
       lt_files    TYPE STANDARD TABLE OF t_file.
 
-DATA : lw_line TYPE string,
-       lt_line TYPE STANDARD TABLE OF string.
+DATA: lw_line TYPE string,
+      lt_line TYPE STANDARD TABLE OF string.
+
+DATA: lc_ushaker   TYPE REF TO lcl_ushaker,
+      l_fileprefix TYPE string.
+
+
 
 *-$-SELECTION SCREEN
+
+SELECTION-SCREEN BEGIN OF BLOCK cli WITH FRAME TITLE title4.
+  PARAMETERS: p_custo TYPE text12 OBLIGATORY.
+SELECTION-SCREEN END OF BLOCK cli.
+
+
 SELECTION-SCREEN BEGIN OF BLOCK use WITH FRAME TITLE title0.
   PARAMETERS: p_use    AS CHECKBOX DEFAULT 'X',
               p_comp   TYPE swnchostname DEFAULT 'TOTAL',
@@ -166,9 +255,12 @@ SELECTION-SCREEN BEGIN OF BLOCK rol WITH FRAME TITLE title1.
   PARAMETERS: p_role   AS   CHECKBOX DEFAULT '',
               p_filer  TYPE rlgrap-filename  DEFAULT '/tmp/test01.txt',
               p_filer2 TYPE rlgrap-filename  DEFAULT '/tmp/test02.txt',
+              p_spra1  TYPE spras DEFAULT sy-langu NO-DISPLAY,
               p_filer3 TYPE rlgrap-filename  DEFAULT '/tmp/test03.txt',
               p_filer4 TYPE rlgrap-filename  DEFAULT '/tmp/test04.txt',
               p_filer5 TYPE rlgrap-filename  DEFAULT '/tmp/test05.txt'.
+*              p_ushake TYPE flag DEFAULT '',
+*              p_filer6 TYPE rlgrap-filename  DEFAULT '/tmp/alias.txt'.
 SELECTION-SCREEN END OF BLOCK rol.
 
 SELECTION-SCREEN BEGIN OF BLOCK gen WITH FRAME TITLE title2.
@@ -177,20 +269,68 @@ SELECTION-SCREEN BEGIN OF BLOCK gen WITH FRAME TITLE title2.
               p_fileg1 TYPE rlgrap-filename  DEFAULT '/tmp/test06.txt'.
 SELECTION-SCREEN END OF BLOCK gen.
 
+SELECTION-SCREEN BEGIN OF BLOCK uan WITH FRAME TITLE title3.
+  PARAMETERS: p_ushake TYPE flag DEFAULT '',
+              p_filer6 TYPE rlgrap-filename  DEFAULT '/tmp/alias.txt'.
+SELECTION-SCREEN END OF BLOCK uan.
+
 *SELECTION-SCREEN ULINE /1(50).
 SELECTION-SCREEN COMMENT /10(50) l_instr.
 *SELECTION-SCREEN ULINE /1(50).
 
 
+*AT SELECTION-SCREEN.
+
 AT SELECTION-SCREEN.
 
+  CLEAR l_fileprefix.
+  CONCATENATE p_custo '_' sy-sysid '_' sy-mandt INTO l_fileprefix.
+
+
+    CONCATENATE   '/tmp/' l_fileprefix '_USE_' p_comp '_' p_periot '_' p_perios'.txt' INTO p_file.
+    lw_file-file = p_file. APPEND lw_file TO lt_files.
+    CONCATENATE   '/tmp/' l_fileprefix '_ROL_AGR_US_' s_ts '.txt' INTO p_filer.
+    lw_file-file = p_filer. APPEND lw_file TO lt_files.
+    CONCATENATE   '/tmp/' l_fileprefix '_ROL_AGR_DE_' s_ts '.txt' INTO p_filer2.
+    lw_file-file = p_filer2. APPEND lw_file TO lt_files.
+    CONCATENATE   '/tmp/' l_fileprefix '_ROL_AGR_12_' s_ts '.txt' INTO p_filer3.
+    lw_file-file = p_filer3. APPEND lw_file TO lt_files.
+    CONCATENATE   '/tmp/' l_fileprefix '_ROL_AGR_PR_' s_ts '.txt' INTO p_filer4.
+    lw_file-file = p_filer4. APPEND lw_file TO lt_files.
+    CONCATENATE   '/tmp/' l_fileprefix '_ROL_USERS_'  s_ts '.txt' INTO p_filer5.
+    lw_file-file = p_filer5. APPEND lw_file TO lt_files.
+    CONCATENATE   '/tmp/' l_fileprefix '_GEN_TRXS_'   s_ts '.txt' INTO p_fileg1.
+    lw_file-file = p_fileg1. APPEND lw_file TO lt_files.
+    CONCATENATE   '/tmp/' l_fileprefix '_Alias.csv' INTO p_filer6.
+    lw_file-file = p_filer6. APPEND lw_file TO lt_files.
 
 *-$- SELSCR
 INITIALIZATION.
 
+  %_P_COMP_%_app_%-text   = 'Component'.
+  %_P_CUSTO_%_app_%-text  = 'Customer name'.
+  %_P_FILE_%_app_%-text   = 'Use File'.
+  %_P_FILEG1_%_app_%-text = 'Transaction file'.
+  %_P_FILER_%_app_%-text  = 'AGR Roles File'.
+  %_P_FILER2_%_app_%-text = 'AGR Define File'.
+  %_P_FILER3_%_app_%-text = 'AGR 1251 File'.
+  %_P_FILER4_%_app_%-text = 'AGR Prof File'.
+  %_P_FILER5_%_app_%-text = 'USER File'.
+  %_P_FILER6_%_app_%-text = 'USER Alias File'.
+  %_P_GENE_%_app_%-text   = 'General File Generation'.
+  %_P_PERIOS_%_app_%-text = 'Date'.
+  %_P_PERIOT_%_app_%-text = 'Period'.
+  %_P_ROLE_%_app_%-text   = 'Roles Files Generation'.
+  %_P_SPRA1_%_app_%-text  = 'Roles Description Language'.
+  %_P_SUMMAR_%_app_%-text = 'Summary Only'.
+  %_P_USE_%_app_%-text    = 'Use File Generation'.
+  %_P_USHAKE_%_app_%-text = 'User Anonymization'.
+
   title0 = 'Use'.
   title1 = 'Roles & Users'.
   title2 = 'General'.
+  title3 = 'User Anonymization'.
+  title4 = 'Customer Name'.
   GET TIME STAMP FIELD ts.
   s_ts = ts.
   CONDENSE s_ts.
@@ -198,25 +338,28 @@ INITIALIZATION.
 * CLEAR p_file.
 *  CONCATENATE:  '/tmp/Use_' p_comp '_' p_periot '_' p_perios'.txt' INTO p_file.
 
-  CONCATENATE   '/tmp/Use_' p_comp '_' p_periot '_' p_perios'.txt' INTO p_file.
+  CONCATENATE p_custo '_' sy-sysid '_' sy-mandt INTO l_fileprefix.
+
+  CONCATENATE   '/tmp/' l_fileprefix '_USE_' p_comp '_' p_periot '_' p_perios'.txt' INTO p_file.
   lw_file-file = p_file. APPEND lw_file TO lt_files.
-  CONCATENATE   '/tmp/Rol_AGR_USERS_'  s_ts '.txt' INTO p_filer.
+  CONCATENATE   '/tmp/' l_fileprefix '_ROL_AGR_US_' s_ts '.txt' INTO p_filer.
   lw_file-file = p_filer. APPEND lw_file TO lt_files.
-  CONCATENATE   '/tmp/Rol_AGR_DEFINE_' s_ts '.txt' INTO p_filer2.
+  CONCATENATE   '/tmp/' l_fileprefix '_ROL_AGR_DE_' s_ts '.txt' INTO p_filer2.
   lw_file-file = p_filer2. APPEND lw_file TO lt_files.
-  CONCATENATE   '/tmp/Rol_AGR_1251_'   s_ts '.txt' INTO p_filer3.
+  CONCATENATE   '/tmp/' l_fileprefix '_ROL_AGR_12_' s_ts '.txt' INTO p_filer3.
   lw_file-file = p_filer3. APPEND lw_file TO lt_files.
-  CONCATENATE   '/tmp/Rol_AGR_PROF_'   s_ts '.txt' INTO p_filer4.
+  CONCATENATE   '/tmp/' l_fileprefix '_ROL_AGR_PR_' s_ts '.txt' INTO p_filer4.
   lw_file-file = p_filer4. APPEND lw_file TO lt_files.
-  CONCATENATE   '/tmp/Rol_USR01_'      s_ts '.txt' INTO p_filer5.
+  CONCATENATE   '/tmp/' l_fileprefix '_ROL_USR01_'  s_ts '.txt' INTO p_filer5.
   lw_file-file = p_filer5. APPEND lw_file TO lt_files.
-  CONCATENATE   '/tmp/Gen_TSTC_'       s_ts '.txt' INTO p_fileg1.
+  CONCATENATE   '/tmp/' l_fileprefix '_GEN_TRXS_'   s_ts '.txt' INTO p_fileg1.
   lw_file-file = p_fileg1. APPEND lw_file TO lt_files.
+  CONCATENATE   '/tmp/' l_fileprefix '_Alias.csv' INTO p_filer6.
+  lw_file-file = p_filer6. APPEND lw_file TO lt_files.
 
 *  Condense: p_file, p_filer
 
   SELECT SINGLE * FROM opsystem INTO lw_opsystem WHERE opsys = sy-opsys.
-
 
   lw_opsystem-filesys = to_upper( lw_opsystem-filesys ).
 
@@ -229,9 +372,9 @@ INITIALIZATION.
 
       CASE sy-tabix.
         WHEN 1.
-          p_file = lc_winpath->get_winpath( ).
+          p_file   = lc_winpath->get_winpath( ).
         WHEN 2.
-          p_filer = lc_winpath->get_winpath( ).
+          p_filer  = lc_winpath->get_winpath( ).
         WHEN 3.
           p_filer2 = lc_winpath->get_winpath( ).
         WHEN 4.
@@ -242,6 +385,8 @@ INITIALIZATION.
           p_filer5 = lc_winpath->get_winpath( ).
         WHEN 7.
           p_fileg1 = lc_winpath->get_winpath( ).
+        WHEN 8.
+          p_filer6 = lc_winpath->get_winpath( ).
       ENDCASE.
 
       FREE lc_winpath.
@@ -253,6 +398,43 @@ INITIALIZATION.
 
 START-OF-SELECTION.
 
+*------------------------------------------------------------------------&UAN
+
+  IF p_ushake  = 'X'.
+    CREATE OBJECT lc_ushaker.
+  ENDIF.
+
+  IF p_ushake = 'X'.
+
+    OPEN DATASET p_filer6 FOR OUTPUT IN TEXT MODE ENCODING DEFAULT.
+
+    CALL METHOD lc_ushaker->get_alias_table IMPORTING lt_ushake = lt_ushake.
+
+    LOOP AT lt_ushake INTO lw_ushake.
+
+      CONCATENATE lw_ushake-bname ';' lw_ushake-alias INTO lw_line.
+
+      CALL METHOD cl_abap_container_utilities=>fill_container_c
+        EXPORTING
+          im_value               = lw_line
+        IMPORTING
+          ex_container           = line_file01
+        EXCEPTIONS
+          illegal_parameter_type = 1
+          OTHERS                 = 2.
+      IF sy-subrc <> 0.
+        CONTINUE.
+      ENDIF.
+      TRANSFER line_file01 TO p_filer6.
+      CLEAR: line_file01,lw_line.
+
+    ENDLOOP.
+    CLOSE DATASET p_filer6.
+    WRITE: / 'Fichero' ,p_filer6 ,  ' copiado correctamente'.
+    CLEAR lt_ushake[].
+  ENDIF.
+
+*------------------------------------------------------------------------&USE
   IF p_use IS NOT INITIAL.
 
     CALL FUNCTION 'SWNC_COLLECTOR_GET_AGGREGATES'
@@ -304,6 +486,10 @@ START-OF-SELECTION.
       MESSAGE 'No data selected'(001) TYPE 'E'.
     ENDIF.
 
+    DATA: l_entry_id1(40),
+          l_entry_id2(32),
+          l_entry_id3(1).
+
     LOOP AT lt_ucode INTO lw_ucode.
       lw_extract01-tasktype = lw_ucode-tasktype.
       lw_extract01-account  = lw_ucode-account.
@@ -325,37 +511,54 @@ START-OF-SELECTION.
       lw_extract02-tasktype   = lw_extract01-tasktype.
       lw_extract02-account    = lw_extract01-account.
       lw_extract02-tasktdesc  = lw_extract01-tasktdesc.
-      lw_extract02-entry_id   = lw_extract01-entry_id.
+*     lw_extract02-entry_id   = lw_extract01-entry_id.
+      l_entry_id1 = lw_extract01-entry_id(40).
+      l_entry_id2 = lw_extract01-entry_id+40(32).
+      l_entry_id3 = lw_extract01-entry_id+72(1).
       lw_extract02-count      = lw_extract01-count.
 
+      CONDENSE lw_extract02-count.
+      IF l_entry_id2 IS INITIAL.
+        l_entry_id2 = '_B_'.
+      ENDIF.
 
-      CONCATENATE lw_extract02-tasktype ';'  lw_extract02-account ';'  lw_extract02-tasktdesc ';'
-                  lw_extract02-entry_id   ';'  lw_extract02-count
-              INTO line_file01 IN CHARACTER MODE.
+      IF p_ushake = 'X'.
+        CALL METHOD lc_ushaker->get_alias EXPORTING bname = lw_extract02-account IMPORTING alias = lw_extract02-account.
+
+      ENDIF.
+
+      CONCATENATE lw_extract02-tasktype   ';'  lw_extract02-account ';'  lw_extract02-tasktdesc ';'
+                  l_entry_id1  ';'  l_entry_id2  ';' l_entry_id3  ';'  lw_extract02-count
+                  INTO line_file01 IN CHARACTER MODE.
 
       TRANSFER line_file01 TO p_file.
-      CLEAR: line_file01 ,lw_extract02.
+      CLEAR: line_file01 ,lw_extract02, l_entry_id1, l_entry_id2, l_entry_id3.
 
     ENDLOOP.
 
     CLOSE DATASET p_file.
     WRITE: 'Fichero' ,p_file ,  ' copiado correctamente'.
   ENDIF.
-*-----------------------------------------------------------------------
+*------------------------------------------------------------------------&ROLES&USERS
   IF p_role IS NOT INITIAL.
 
 * -TABLE USR01------------------------------------------------------
     SELECT * FROM v_username INTO TABLE lt_username.
     SELECT  bname uflag trdat ltime  FROM usr02  INTO CORRESPONDING FIELDS OF TABLE lt_ulock.
 
+*    IF p_ushake  = 'X'.
+*      CREATE OBJECT lc_ushaker.
+*    ENDIF.
+
     LOOP AT lt_ulock INTO lw_ulock.
       READ TABLE lt_username INTO lw_username WITH KEY bname = lw_ulock-bname.
-      IF sy-subrc <> 0.
+      IF sy-subrc <> 0 OR p_ushake = 'X'.
         lw_username-persnumber = '9999999999'.
         lw_username-name_last = lw_username-name_text =
-        lw_username-mc_namefir = lw_username-mc_namelas = 'TBD'.
+        lw_username-mc_namefir = lw_username-mc_namelas = '_B_'.
       ENDIF.
 
+      lw_user-mandt          = sy-mandt.
       lw_user-bname          = lw_ulock-bname.
       lw_user-Persnum        = lw_username-persnumber.
       lw_user-name_last      = lw_username-name_last.
@@ -366,10 +569,19 @@ START-OF-SELECTION.
       lw_user-ltime          = lw_ulock-ltime.
       lw_user-uflag          = lw_ulock-uflag.
 
+      IF p_ushake = 'X'.
+*        lw_ushake-bname = lw_user-bname.
+**       lw_user-bname   = lc_ushaker->shake( ).
+        CALL METHOD lc_ushaker->get_alias EXPORTING bname = lw_user-bname IMPORTING alias = lw_user-bname.
+*        lw_ushake-alias = lw_user-bname.
+*        APPEND lw_ushake TO lt_ushake.
+*        CLEAR lw_ushake.
+      ENDIF.
+
       APPEND lw_user TO lt_user.
 
-      CONCATENATE: lw_user-bname ';' lw_user-Persnum ';' lw_user-name_last
-                   lw_user-name_text ';' lw_user-mc_name_first ';' lw_user-mc_name_last
+      CONCATENATE: lw_user-mandt ';' lw_user-bname ';' lw_user-Persnum ';' lw_user-name_last ';'
+                   lw_user-name_text ';' lw_user-mc_name_first ';' lw_user-mc_name_last ';'
                    lw_user-trdat ';' lw_user-ltime ';' lw_user-uflag INTO lw_line.
       APPEND lw_line TO lt_line.
 
@@ -400,19 +612,32 @@ START-OF-SELECTION.
     CLOSE DATASET p_filer5.
     WRITE: / 'Fichero' ,p_filer5 ,  ' copiado correctamente'.
 
-  ENDIF.
-  CLEAR: lt_line[], lw_line.
+    CLEAR: lt_line[], lw_line.
+
 
 * -TABLE AGR_USERS---------------------------------------------------
     SELECT * FROM agr_users INTO TABLE lt_agr_user.
+
+
 
     OPEN DATASET p_filer FOR OUTPUT IN TEXT MODE ENCODING DEFAULT.
 
     LOOP AT lt_agr_user INTO lw_agr_user.
 
+      IF p_ushake = 'X'.
+        CALL METHOD lc_ushaker->get_alias EXPORTING bname = lw_agr_user-uname IMPORTING alias = lw_agr_user-uname.
+      ENDIF.
+      s_st_aux = lw_agr_user-change_tst.
+      CONDENSE s_st_aux.
+
+      CONCATENATE:  lw_agr_user-mandt      ';' lw_agr_user-agr_name   ';' lw_agr_user-uname      ';'
+                    lw_agr_user-from_dat   ';' lw_agr_user-to_dat     ';' lw_agr_user-exclude    ';'
+                    lw_agr_user-change_dat ';' lw_agr_user-change_tim ';' s_st_aux               ';'
+                    lw_agr_user-org_flag   ';' lw_agr_user-col_flag      INTO lw_line.
+
       CALL METHOD cl_abap_container_utilities=>fill_container_c
         EXPORTING
-          im_value               = lw_agr_user
+          im_value               = lw_line
         IMPORTING
           ex_container           = line_file01
         EXCEPTIONS
@@ -423,25 +648,40 @@ START-OF-SELECTION.
       ENDIF.
 
       TRANSFER line_file01 TO p_filer.
-
-      CLEAR line_file01.
+      CLEAR: line_file01, lw_line,s_st_aux, lw_agr_texts.
 
     ENDLOOP.
 
     CLOSE DATASET p_filer.
-    CLEAR lt_agr_user[].
+    CLEAR: lt_agr_user[], lt_agr_texts[].
     WRITE: / 'Fichero' ,p_filer ,  ' copiado correctamente'.
 
 * -TABLE AGR_DEFINE------------------------------------------------
     SELECT * FROM agr_DEFINE INTO TABLE lt_agr_define.
+    SELECT * FROM agr_texts INTO TABLE lt_agr_texts WHERE spras = p_spra1.
 
     OPEN DATASET p_filer2 FOR OUTPUT IN TEXT MODE ENCODING DEFAULT.
 
+
     LOOP AT lt_agr_define INTO lw_agr_define.
+      READ TABLE lt_agr_texts INTO lw_agr_texts WITH KEY agr_name = lw_agr_define-agr_name.
+
+      s_st_aux  = lw_agr_define-create_tmp.
+      s_st_aux2 = lw_agr_define-change_tmp.
+
+      CONDENSE:s_st_aux,s_st_aux2.
+
+      CONCATENATE:  lw_agr_define-mandt      ';' lw_agr_define-agr_name   ';' lw_agr_define-create_usr  ';'
+                    lw_agr_define-create_dat ';' lw_agr_define-create_tim ';' s_st_aux                  ';'
+                    lw_agr_define-change_usr ';' lw_agr_define-change_dat ';' lw_agr_define-change_tim  ';'
+                    s_st_aux2                ';' lw_agr_define-attributes ';' lw_agr_texts-text
+                    INTO lw_line.
+
+      CONDENSE lw_line.
 
       CALL METHOD cl_abap_container_utilities=>fill_container_c
         EXPORTING
-          im_value               = lw_agr_define
+          im_value               = lw_line
         IMPORTING
           ex_container           = line_file01
         EXCEPTIONS
@@ -452,7 +692,7 @@ START-OF-SELECTION.
       ENDIF.
       TRANSFER line_file01 TO p_filer2.
 
-      CLEAR line_file01.
+      CLEAR: line_file01, lw_line, s_st_aux, s_st_aux2.
 
     ENDLOOP.
 
@@ -467,9 +707,17 @@ START-OF-SELECTION.
 
     LOOP AT lt_agr_1251 INTO lw_agr_1251.
 
+      CONCATENATE:  lw_agr_1251-mandt    ';' lw_agr_1251-agr_name ';' lw_agr_1251-counter  ';'
+                    lw_agr_1251-object   ';' lw_agr_1251-auth     ';' lw_agr_1251-variant  ';'
+                    lw_agr_1251-field    ';' lw_agr_1251-low      ';' lw_agr_1251-high     ';'
+                    lw_agr_1251-modified ';' lw_agr_1251-deleted  ';' lw_agr_1251-copied   ';'
+                    lw_agr_1251-neu      ';' lw_agr_1251-node     INTO lw_line.
+
+      CONDENSE lw_line.
+
       CALL METHOD cl_abap_container_utilities=>fill_container_c
         EXPORTING
-          im_value               = lw_agr_1251
+          im_value               = lw_line
         IMPORTING
           ex_container           = line_file01
         EXCEPTIONS
@@ -494,9 +742,14 @@ START-OF-SELECTION.
 
     LOOP AT lt_agr_prof INTO lw_agr_prof.
 
+      CONCATENATE:  lw_agr_prof-mandt    ';' lw_agr_prof-agr_name ';' lw_agr_prof-langu  ';'
+                    lw_agr_prof-profile  ';' lw_agr_prof-ptext  INTO lw_line.
+
+      CONDENSE lw_line.
+
       CALL METHOD cl_abap_container_utilities=>fill_container_c
         EXPORTING
-          im_value               = lw_agr_prof
+          im_value               = lw_line
         IMPORTING
           ex_container           = line_file01
         EXCEPTIONS
@@ -507,14 +760,14 @@ START-OF-SELECTION.
       ENDIF.
       TRANSFER line_file01 TO p_filer4.
 
-      CLEAR line_file01.
+      CLEAR: line_file01, lw_line.
 
     ENDLOOP.
 
     CLOSE DATASET p_filer4.
     WRITE: / 'Fichero' ,p_filer4 ,  ' copiado correctamente'.
 
-
+  ENDIF.
   IF p_gene IS NOT INITIAL.
 
 * -TABLE TSTCV - CSV---------------------------------------------------
@@ -531,7 +784,7 @@ START-OF-SELECTION.
       IF sy-subrc = 0.
         lw_trxs-description = lw_tstcv-ttext.
       ELSE.
-        lw_trxs-description = 'TBD'.
+        lw_trxs-description = '_B_'.
       ENDIF.
       lw_trxs-tcode        = lw_tstc-tcode.
       lw_trxs-progname     = lw_tstc-pgmna.
@@ -557,7 +810,7 @@ START-OF-SELECTION.
       ENDIF.
       TRANSFER line_file01 TO p_fileg1.
 
-      CLEAR line_file01.
+      CLEAR: line_file01, lw_line.
 
     ENDLOOP.
 
@@ -565,3 +818,7 @@ START-OF-SELECTION.
     CLEAR lt_tstc[].
     WRITE: / 'Fichero' ,p_fileg1 ,  ' copiado correctamente'.
   ENDIF.
+
+END-of-SELECTION.
+
+  CLEAR: l_fileprefix.

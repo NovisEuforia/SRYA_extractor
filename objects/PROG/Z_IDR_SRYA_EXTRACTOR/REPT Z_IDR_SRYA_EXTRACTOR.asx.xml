@@ -31,6 +31,13 @@
 </TEXTPOOLT>
 <TEXTPOOLT>
 <ID>S</ID>
+<KEY>P_CUSTO</KEY>
+<LANG>E</LANG>
+<ENTRY>        Customer name</ENTRY>
+<LENGTH>21</LENGTH>
+</TEXTPOOLT>
+<TEXTPOOLT>
+<ID>S</ID>
 <KEY>P_FILE</KEY>
 <LANG>E</LANG>
 <ENTRY>        Use File</ENTRY>
@@ -129,6 +136,13 @@
 </TEXTPOOLT>
 <TEXTPOOLT>
 <ID>S</ID>
+<KEY>P_FILER6</KEY>
+<LANG>E</LANG>
+<ENTRY>        User Alias file</ENTRY>
+<LENGTH>36</LENGTH>
+</TEXTPOOLT>
+<TEXTPOOLT>
+<ID>S</ID>
 <KEY>P_GENE</KEY>
 <LANG>E</LANG>
 <ENTRY>        General File generation</ENTRY>
@@ -185,6 +199,13 @@
 </TEXTPOOLT>
 <TEXTPOOLT>
 <ID>S</ID>
+<KEY>P_SPRA1</KEY>
+<LANG>E</LANG>
+<ENTRY>        Roles description language</ENTRY>
+<LENGTH>34</LENGTH>
+</TEXTPOOLT>
+<TEXTPOOLT>
+<ID>S</ID>
 <KEY>P_SUMMAR</KEY>
 <LANG>E</LANG>
 <ENTRY>        Summary only flag</ENTRY>
@@ -210,6 +231,13 @@
 <LANG>S</LANG>
 <ENTRY>        Grabar fichero de uso</ENTRY>
 <LENGTH>29</LENGTH>
+</TEXTPOOLT>
+<TEXTPOOLT>
+<ID>S</ID>
+<KEY>P_USHAKE</KEY>
+<LANG>E</LANG>
+<ENTRY>        User Anonymization</ENTRY>
+<LENGTH>27</LENGTH>
 </TEXTPOOLT>
 </TEXTPOOLT>
 </asx:values>
