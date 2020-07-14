@@ -37,7 +37,8 @@ REPORT z_idr_srya_extractor.
 *  2020.07.09 : SRYA EXTRACTOR V1.2b: Selection Screen text-elements
 *                                     included un source-code
 *  2020.07.09 : SRYA EXTRACTOR V1.2c: Customer Id file name generation
-*  2020.07.12 : SRYA EXTRACTOR V1.3 : Users License data
+*  2020.07.10 : SRYA EXTRACTOR V1.3 : User Anonimization
+*  2020.07.12 : SRYA EXTRACTOR V1.3 : User License data
 ************************************************************************
 *-$- TYPES
 TYPES: BEGIN OF t_extract01,
