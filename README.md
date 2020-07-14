@@ -27,14 +27,14 @@ Según cualquiera de las siguientes opciones:
   
 2. Mediante Importación de **orden de transporte:**
 
-   1. Se descarga la última orden de transporte de la ubicación  ![/SRYA_extractor/ChangeRequest/](https://github.com/NovisEuforia/SRYA_extractor/blob/master/ChangeRequest).
+   1. Se descarga la última orden de transporte de la ubicación [/SRYA_extractor/ChangeRequest/](https://github.com/NovisEuforia/SRYA_extractor/blob/master/ChangeRequest).
    2. Se importa la orden en el _TMS - Transport Management System_ - _Transacción STMS_
    3. Se despliega la orden el entorno en donde se va a realizar la extracción
    
 3. Mediante Clonado/Copia del repositorio **GitHub:** _(Solo S4 y abapGIT)_
 
    1. Sistemas **S4** con gCTS: Clonado del repositorio **SRYA_extractor** en landscape destino y despliegue en el entorno donde se va a realizar la extracción.
-   2. Sistemas **no S4 con ![abapGIT](https://github.com/larshp/abapGit.git)**: Clonado del repositorio **SRYA_extractor** en landscape destino y despliegue en el entorno donde se va a realizar la extracción.  
+   2. Sistemas **no S4 con** [abapGIT](https://github.com/larshp/abapGit.git): Clonado del repositorio **SRYA_extractor** en landscape destino y despliegue en el entorno donde se va a realizar la extracción.  
    
 ## Ejecución del Scan
 
