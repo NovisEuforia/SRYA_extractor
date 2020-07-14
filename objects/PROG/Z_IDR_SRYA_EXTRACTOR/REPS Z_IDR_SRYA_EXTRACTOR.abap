@@ -330,7 +330,7 @@ AT SELECTION-SCREEN.
   lw_file-file = p_filer3. APPEND lw_file TO lt_files.
   CONCATENATE   '/tmp/' l_fileprefix '_ROL_AGR_PR_' s_ts '.csv' INTO p_filer4.
   lw_file-file = p_filer4. APPEND lw_file TO lt_files.
-  CONCATENATE   '/tmp/' l_fileprefix '_ROL_USERS_'  s_ts '.csv' INTO p_filer5.
+  CONCATENATE   '/tmp/' l_fileprefix '_USE_GEN_DA'  s_ts '.csv' INTO p_filer5.
   lw_file-file = p_filer5. APPEND lw_file TO lt_files.
   CONCATENATE   '/tmp/' l_fileprefix '_GEN_TRXS_'  s_ts '.csv' INTO p_fileg1.
   lw_file-file = p_fileg1. APPEND lw_file TO lt_files.
@@ -355,31 +355,31 @@ INITIALIZATION.
   p_perios = l_firstlast.
 
   %_P_COMP_%_app_%-text   = 'Component'.
-  %_P_CUSTO_%_app_%-text  = 'Customer name'.
-  %_P_FILE_%_app_%-text   = 'Use File'.
-  %_P_FILEG1_%_app_%-text = 'Transaction file'.
-  %_P_FILER_%_app_%-text  = 'AGR Roles File'.
-  %_P_FILER2_%_app_%-text = 'AGR Define File'.
-  %_P_FILER3_%_app_%-text = 'AGR 1251 File'.
-  %_P_FILER4_%_app_%-text = 'AGR Prof File'.
+  %_P_CUSTO_%_app_%-text  = 'Customer Name'.
+  %_P_FILE_%_app_%-text   = 'Use Data File'.
+  %_P_FILEG1_%_app_%-text = 'Transaction Data File'.
+  %_P_FILER_%_app_%-text  = 'AGR Roles Data File'.
+  %_P_FILER2_%_app_%-text = 'AGR Define Data File'.
+  %_P_FILER3_%_app_%-text = 'AGR 1251 Data File'.
+  %_P_FILER4_%_app_%-text = 'AGR Prof Data File'.
   %_P_FILER5_%_app_%-text = 'USER General Data File'.
-  %_P_FILER6_%_app_%-text = 'USER Alias File'.
-  %_P_GENE_%_app_%-text   = 'General Files Generation'.
+  %_P_FILER6_%_app_%-text = 'Alias Data File'.
+  %_P_GENE_%_app_%-text   = 'General Data Generation'.
   %_P_PERIOS_%_app_%-text = 'Date'.
   %_P_PERIOT_%_app_%-text = 'Period'.
-  %_P_ROLE_%_app_%-text   = 'Roles Files Generation'.
+  %_P_ROLE_%_app_%-text   = 'R & U Data Generation'.
   %_P_SPRA1_%_app_%-text  = 'Roles Description Language'.
   %_P_SUMMAR_%_app_%-text = 'Summary Only'.
-  %_P_USE_%_app_%-text    = 'Use File Generation'.
-  %_P_USHAKE_%_app_%-text = 'User Anonymization'.
-  %_P_LICENS_%_app_%-text = 'User License Data'.
+  %_P_USE_%_app_%-text    = 'Use Data Generation'.
+  %_P_USHAKE_%_app_%-text = 'User Alias Generation'.
+  %_P_LICENS_%_app_%-text = 'License Data Generation'.
   %_P_FILER7_%_app_%-text = 'User License Data File'.
 
   title0 = 'Use'.
   title1 = 'Roles & Users'.
   title2 = 'General'.
   title3 = 'User Anonymization'.
-  title4 = 'Customer Name'.
+  title4 = 'Customer'.
   title5 = 'Licenses'.
 
   GET TIME STAMP FIELD ts.
@@ -401,7 +401,7 @@ INITIALIZATION.
   lw_file-file = p_filer3. APPEND lw_file TO lt_files.
   CONCATENATE   '/tmp/' l_fileprefix '_ROL_AGR_PR_' s_ts '.csv' INTO p_filer4.
   lw_file-file = p_filer4. APPEND lw_file TO lt_files.
-  CONCATENATE   '/tmp/' l_fileprefix '_ROL_USERS_'  s_ts '.csv' INTO p_filer5.
+  CONCATENATE   '/tmp/' l_fileprefix '_USE_GEN_DA'  s_ts '.csv' INTO p_filer5.
   lw_file-file = p_filer5. APPEND lw_file TO lt_files.
   CONCATENATE   '/tmp/' l_fileprefix '_GEN_TRXS_'  s_ts '.csv' INTO p_fileg1.
   lw_file-file = p_fileg1. APPEND lw_file TO lt_files.
@@ -579,7 +579,6 @@ START-OF-SELECTION.
 
         IF p_ushake = 'X'.
           CALL METHOD lc_ushaker->get_alias EXPORTING bname = lw_extract02-account IMPORTING alias = lw_extract02-account.
-
         ENDIF.
 
         CONCATENATE lw_extract02-tasktype   ';'  lw_extract02-account ';'  lw_extract02-tasktdesc ';'
@@ -868,6 +867,11 @@ START-OF-SELECTION.
         lw_userlic-charge_info     = lw_tutypa-charge_info.
         lw_userlic-utyptext        = lw_tutypnow-utyptext.
         lw_userlic-sort            = lw_tutypnow-sort.
+
+        IF p_ushake = 'X'.
+          CALL METHOD lc_ushaker->get_alias EXPORTING bname = lw_userlic-usr06-bname
+                                            IMPORTING alias = lw_userlic-usr06-bname.
+        ENDIF.
 
 
         CONCATENATE: lw_userlic-usr06-mandt  ';' lw_userlic-usr06-bname   ';' lw_userlic-usr06-lic_type ';'
