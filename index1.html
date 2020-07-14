@@ -1,25 +1,17 @@
 <!doctype html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Srya extractor by NovisEuforia</title>
-
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/github-light.css">
-    <meta name="viewport" content="width=device-width">
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-  </head>
+    <head>
+        <title>Novis Euforia - SDRYA Extractor</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <link rel="stylesheet" href="styles.css">
+    </head>
   <body>
     <div class="wrapper">
       <header>
-        <h1>Srya extractor</h1>
-        <p>SRYA_extractor</p>
+        <h1>SRYA extractor</h1>
+        <p>IDR for the R&amp;A framework</p>
 
         <p class="view"><a href="https://github.com/NovisEuforia/SRYA_extractor">View the Project on GitHub <small>NovisEuforia/SRYA_extractor</small></a></p>
-
 
         <ul>
           <li><a href="https://github.com/NovisEuforia/SRYA_extractor/zipball/master">Download <strong>ZIP File</strong></a></li>
@@ -54,7 +46,7 @@
 <p>Creación del report <strong>de forma manual:</strong></p>
 <ol>
 <li>Creación del report Z_IDR_SRYA_EXTRACTOR mediante la transacción SE38 o SE80</li>
-<li>Copiar el código fuente del fichero -REPS Z_IDR_SRYA_EXTRACTOR.abap- ubicado en <img src="https://github.com/NovisEuforia/SRYA_extractor/blob/master/objects/PROG/Z_IDR_SRYA_EXTRACTOR/REPS%20Z_IDR_SRYA_EXTRACTOR.abap" alt="/objects/PROG/Z_IDR_SRYA_EXTRACTOR">
+<li>Copiar el código fuente del fichero -REPS Z_IDR_SRYA_EXTRACTOR.abap- ubicado en <a href="https://github.com/NovisEuforia/SRYA_extractor/blob/master/objects/PROG/Z_IDR_SRYA_EXTRACTOR/REPS%20Z_IDR_SRYA_EXTRACTOR.abap" alt="/objects/PROG/Z_IDR_SRYA_EXTRACTOR">
 </li>
 <li>Grabar y report , meterlo en una Orden de transporte</li>
 <li>Desplegarlo en el entorno en donde se realizar la extracción</li>
@@ -63,7 +55,7 @@
 <li>
 <p>Mediante Importación de <strong>orden de transporte:</strong></p>
 <ol>
-<li>Se descarga la última orden de transporte de la ubicación  <img src="https://github.com/NovisEuforia/SRYA_extractor/blob/master/ChangeRequest" alt="/SRYA_extractor/ChangeRequest/">.</li>
+<li>Se descarga la última orden de transporte de la ubicación <a href="https://github.com/NovisEuforia/SRYA_extractor/blob/master/ChangeRequest">/SRYA_extractor/ChangeRequest/</a>.</li>
 <li>Se importa la orden en el <em>TMS - Transport Management System</em> - <em>Transacción STMS</em>
 </li>
 <li>Se despliega la orden el entorno en donde se va a realizar la extracción</li>
@@ -73,7 +65,7 @@
 <p>Mediante Clonado/Copia del repositorio <strong>GitHub:</strong> <em>(Solo S4 y abapGIT)</em></p>
 <ol>
 <li>Sistemas <strong>S4</strong> con gCTS: Clonado del repositorio <strong>SRYA_extractor</strong> en landscape destino y despliegue en el entorno donde se va a realizar la extracción.</li>
-<li>Sistemas <strong>no S4 con <img src="https://github.com/larshp/abapGit.git" alt="abapGIT"></strong>: Clonado del repositorio <strong>SRYA_extractor</strong> en landscape destino y despliegue en el entorno donde se va a realizar la extracción.</li>
+<li>Sistemas <strong>no S4 con</strong> <a href="https://github.com/larshp/abapGit.git">abapGIT</a>: Clonado del repositorio <strong>SRYA_extractor</strong> en landscape destino y despliegue en el entorno donde se va a realizar la extracción.</li>
 </ol>
 </li>
 </ol>
@@ -95,7 +87,7 @@
 <p><strong>6.Anonimización</strong>: Información sobre los usuarios anonimizados.</p>
 <p>Debido a lo heterogeneo y ocasionalmente voluminoso de la información a extraer, el report deposita la información extraída en un directorio del servidor de aplicación permitiendo así la ejecución del report en modo backgorund.</p>
 <p>El report se ejecuta directamente desde la <strong>SE38</strong>:
-<img src="https://github.com/NovisEuforia/SRYA_extractor/blob/master/files/Z_IDR_SRYA_EXTRACTOR_1000.png?raw=true" alt="Pantalla de selección"></p>
+<img src="https://github.com/NovisEuforia/SRYA_extractor/files/Z_IDR_SRYA_EXTRACTOR_1000.png?" alt="Pantalla de selección"></p>
 <p><strong>Pantalla de Selección</strong></p>
 <p><strong>1.Customer</strong>:Información del cliente, solo tiene el parámetro obligatorio <em>Customer name</em>, este parámetro sirve para generar el nombre de los ficheros y poder ser identificados de forma automática en el sistema.</p>
 <p><strong>2.Uso</strong>: Información de los datos de uso, tiene los siguientes parámetros:</p>
@@ -171,6 +163,6 @@
       </footer>
     </div>
     <script src="javascripts/scale.fix.js"></script>
-    
+
   </body>
 </html>
