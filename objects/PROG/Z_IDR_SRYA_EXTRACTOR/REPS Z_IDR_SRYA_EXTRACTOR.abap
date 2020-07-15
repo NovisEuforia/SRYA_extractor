@@ -346,12 +346,12 @@ INITIALIZATION.
   l_firstlast            =   sy-datum.
 
   IF l_firstlast+4(2)    <>  '01'.
-     l_firstlast+4(2)    =   l_firstlast+4(2) - 1.
+    l_firstlast+4(2)    =   l_firstlast+4(2) - 1.
   ELSE.
     l_firstlast+4(2)     =  '12'.
     l_firstlast(4)       =   l_firstlast(4) - 1.
   ENDIF.
-     l_firstlast+6(2)    =   '01'.
+  l_firstlast+6(2)    =   '01'.
 
   p_perios = l_firstlast.
 
@@ -718,7 +718,7 @@ START-OF-SELECTION.
     WRITE: / 'File' ,p_filer ,  ' has been generated'.
 
 * -TABLE AGR_DEFINE------------------------------------------------
-    SELECT * FROM agr_DEFINE INTO TABLE lt_agr_define.
+    SELECT * FROM agr_define INTO TABLE lt_agr_define.
     SELECT * FROM agr_texts INTO TABLE lt_agr_texts WHERE spras = p_spra1.
 
     OPEN DATASET p_filer2 FOR OUTPUT IN TEXT MODE ENCODING DEFAULT.
@@ -732,11 +732,11 @@ START-OF-SELECTION.
 
       CONDENSE:s_st_aux,s_st_aux2.
 
-      CONCATENATE:  lw_agr_define-mandt      ';' lw_agr_define-agr_name   ';' lw_agr_define-create_usr  ';'
-                    lw_agr_define-create_dat ';' lw_agr_define-create_tim ';' s_st_aux                  ';'
-                    lw_agr_define-change_usr ';' lw_agr_define-change_dat ';' lw_agr_define-change_tim  ';'
-                    s_st_aux2                ';' lw_agr_define-attributes ';' lw_agr_texts-text
-                    INTO lw_line.
+      CONCATENATE:  lw_agr_define-mandt      ';' lw_agr_define-agr_name   ';' lw_agr_define-parent_agr ';'
+                    lw_agr_define-create_usr ';' lw_agr_define-create_dat ';' lw_agr_define-create_tim ';'
+                    s_st_aux                 ';' lw_agr_define-change_usr ';' lw_agr_define-change_dat ';'
+                    lw_agr_define-change_tim ';' s_st_aux2                ';' lw_agr_define-attributes ';'
+                    lw_agr_texts-text INTO lw_line.
 
       CONDENSE lw_line.
 
@@ -870,8 +870,11 @@ START-OF-SELECTION.
         lw_userlic-sort            = lw_tutypnow-sort.
 
         IF p_ushake = 'X'.
-          CALL METHOD lc_ushaker->get_alias EXPORTING bname = lw_userlic-usr06-bname
-                                            IMPORTING alias = lw_userlic-usr06-bname.
+          CALL METHOD lc_ushaker->get_alias
+            EXPORTING
+              bname = lw_userlic-usr06-bname
+            IMPORTING
+              alias = lw_userlic-usr06-bname.
         ENDIF.
 
 
