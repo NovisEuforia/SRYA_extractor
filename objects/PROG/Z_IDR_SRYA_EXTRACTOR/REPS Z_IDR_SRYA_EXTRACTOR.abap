@@ -457,7 +457,11 @@ START-OF-SELECTION.
     CREATE OBJECT lc_ushaker.
   ENDIF.
 
-  IF p_ushake = 'X'.
+* Don't forget to put p_ushake = 'X' previously to go-live
+  IF p_ushake = ' '.
+
+* File encoding is set to defaul to get the common options of every system
+
 
     OPEN DATASET p_filer6 FOR OUTPUT IN TEXT MODE ENCODING DEFAULT.
 
