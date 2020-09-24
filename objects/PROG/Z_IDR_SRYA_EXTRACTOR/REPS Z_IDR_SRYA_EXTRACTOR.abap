@@ -331,7 +331,7 @@ AT SELECTION-SCREEN.
   lw_file-file = p_filer3. APPEND lw_file TO lt_files.
   CONCATENATE   '/tmp/' l_fileprefix '_ROL_AGR_PR_' s_ts '.csv' INTO p_filer4.
   lw_file-file = p_filer4. APPEND lw_file TO lt_files.
-  CONCATENATE   '/tmp/' l_fileprefix '_USE_GEN_DA'  s_ts '.csv' INTO p_filer5.
+  CONCATENATE   '/tmp/' l_fileprefix '_USR_GEN_DA'  s_ts '.csv' INTO p_filer5.
   lw_file-file = p_filer5. APPEND lw_file TO lt_files.
   CONCATENATE   '/tmp/' l_fileprefix '_GEN_TRXS_'  s_ts '.csv' INTO p_fileg1.
   lw_file-file = p_fileg1. APPEND lw_file TO lt_files.
