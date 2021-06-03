@@ -14,7 +14,7 @@ La versión actual del extractor obtiene la siguiente información del sistema:
 3. **Licencias**: Información sobre el tipo de licencias de los usuarios.
 4. **General**: Información general sobre transacciones, clases de desarrollo, tipos de usuario, etc.
 
-La ejecución más habitual será con los parámetros actuales tal y como los propone el programa, e indicando el nombre del cliente. Se recomienda este tipo de ejecución para obtener una extracción completa. En principio el programa se podrá lanzar en online en la mayoría de los casos si bien, en caso de sistemas muy grandes se puede realizar la ejecución en modo background.
+La ejecución más habitual será con los parámetros actuales tal y como los propone el programa, e indicando el nombre del cliente en el parámetro "Customer Name". Se recomienda este tipo de ejecución para obtener una extracción completa. En principio el programa se podrá lanzar en online en la mayoría de los casos si bien, en caso de sistemas muy grandes se puede realizar la ejecución en modo background.
 
 **Si se utiliza la anonimización de usuarios**, es obligatorio extraer la información en una sola ejecución del programa. Si no se utiliza esta, no hay problema en efectuar distintos lanzamientos para las distintas extracciones - uso, usuarios y roles, etc.-.
 
