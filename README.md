@@ -1,25 +1,25 @@
 # SRYA_extractor V2.0
-SRYA_extractor : IDR Roles y autorizaciones
+SRYA_extractor : IDR Roles y autorizaciones.
 
 
 **Extractor para el análisis de roles y Segregación funciones**. Además de extraer el uso del sistema por parte de los usuarios, extrae información de los roles del sistema, su asignación a los usuarios e información general de los usuarios.  
 
-El extractor esta formado por un solo report **-Z_IDR_SRYA_EXTRACTOR-** autocontenido - no necesita ningún componente _no estándar_ adicional. 
+El extractor esta formado por un solo report **-Z_IDR_SRYA_EXTRACTOR-** autocontenido - no necesita ningún componente _no estándar_ adicional.
 
 ## Información extraída en la versión actual 2.0
 La versión actual del extractor obtiene la siguiente información del sistema:
 
 1. **Uso**: Uso del sistema por parte de los usuarios.
-2. **Usuarios y Roles** : Información de Roles, Autorizaciones y su asignación a usuarios. 
+2. **Usuarios y Roles** : Información de Roles, Autorizaciones y su asignación a usuarios.
 3. **Licencias**: Información sobre el tipo de licencias de los usuarios.
 4. **General**: Información general sobre transacciones, clases de desarrollo, tipos de usuario, etc.
 
-La ejecución más habitual será con los parámetros actuales tal y como los propone el programa, e indicando el nombre del cliente en el parámetro "Customer Name". Se recomienda este tipo de ejecución para obtener una extracción completa. En principio el programa se podrá lanzar en online en la mayoría de los casos si bien, en caso de sistemas muy grandes se puede realizar la ejecución en modo background.
+La ejecución más habitual será con los parámetros actuales tal y como los propone el programa, e indicando el nombre del cliente. Se recomienda este tipo de ejecución para obtener una extracción completa. En principio el programa se podrá lanzar en online en la mayoría de los casos si bien, en caso de sistemas muy grandes se puede realizar la ejecución en modo background.
 
 **Si se utiliza la anonimización de usuarios**, es obligatorio extraer la información en una sola ejecución del programa. Si no se utiliza esta, no hay problema en efectuar distintos lanzamientos para las distintas extracciones - uso, usuarios y roles, etc.-.
 
 ## Método de despliegue del report en el sistema
-Según cualquiera de las siguientes opciones: 
+Según cualquiera de las siguientes opciones:
 
 1. Creación del report **de forma manual:**
 
@@ -27,26 +27,26 @@ Según cualquiera de las siguientes opciones:
    2. Copiar el código fuente del fichero -REPS Z_IDR_SRYA_EXTRACTOR.abap- ubicado en ![/objects/PROG/Z_IDR_SRYA_EXTRACTOR](https://github.com/NovisEuforia/SRYA_extractor/blob/master/objects/PROG/Z_IDR_SRYA_EXTRACTOR/REPS%20Z_IDR_SRYA_EXTRACTOR.abap)
    3. Grabar y report , meterlo en una Orden de transporte
    4. Desplegarlo en el entorno en donde se vaya a realizar la extracción
-  
+
 2. Mediante Importación de **orden de transporte:**
 
    1. Se descarga la última orden de transporte de la ubicación [/SRYA_extractor/ChangeRequest/](https://github.com/NovisEuforia/SRYA_extractor/blob/master/ChangeRequest).
    2. Se importa la orden en el _TMS - Transport Management System_ - _Transacción STMS_
    3. Se despliega la orden el entorno en donde se va a realizar la extracción
-   
+
 3. Mediante Clonado/Copia del repositorio **GitHub:** _(Solo S4 y abapGIT)_
 
    1. Sistemas **S4** con gCTS: Clonado del repositorio **SRYA_extractor** en landscape destino y despliegue en el entorno donde se va a realizar la extracción.
    2. Sistemas **no S4 con** [abapGIT](https://github.com/larshp/abapGit.git): Clonado del repositorio **SRYA_extractor** en landscape destino y despliegue en el entorno donde se va a realizar la extracción.  
-   
+
 ## Ejecución del Scan
 
 Los requisitos para poder ejecutar el report son :
 
-1. Estar loggados en el sistema de la extracción en **idioma inglés** 
+1. Estar loggados en el sistema de la extracción en **idioma inglés**
 2. El usuario que le ejecute debe tener el perfil estándar **S_TOOL_EX**
-  
-   
+
+
   El report tiene 6 partes diferenciadas:  
 **1.Customer**: Nombre del cliente.
 
@@ -61,19 +61,19 @@ Los requisitos para poder ejecutar el report son :
 **6.Anonimización**: Información sobre los usuarios anonimizados.
 
   Debido a lo heterogeneo y ocasionalmente voluminoso de la información a extraer, el report deposita la información extraída en un directorio del servidor de aplicación permitiendo así la ejecución del report en modo backgorund.
-  
+
   El report se ejecuta directamente desde la **SE38**:
 ![Pantalla de selección](https://github.com/NovisEuforia/SRYA_extractor/blob/master/files/Z_IDR_SRYA_EXTRACTOR_1000V2.png?raw=true)  
-    
+
  **Pantalla de Selección**
- 
+
  **1.Customer**:Información del cliente, solo tiene el parámetro obligatorio _Customer name_, este parámetro sirve para generar el nombre de los ficheros y poder ser identificados de forma automática en el sistema.
- 
+
  **2.Uso**: Información de los datos de uso, tiene los siguientes parámetros:
- 
+
 * **_Use Data generation_**   : _Grabar fichero de uso_ = "X".
 
-* **Initial_Date_**   : _Fecha de comienzo de análisis del uso. Por defecto se inicializará al día 01 de la fecha actual menos tres meses. Cambiar si se desea analizar mas o menos uso. 
+* **Initial_Date_**   : _Fecha de comienzo de análisis del uso. Por defecto se inicializará al día 01 de la fecha actual menos tres meses. Cambiar si se desea analizar mas o menos uso.
 * **_Use Data File_** : _Nombre del fichero_ Generado automáticamente.            
 
 El nombre de todos los ficheros se genera automáticamente, **se recomienda no modificar el nombre de los ficheros** salvo el directorio que por defecto es el **_tmp_**.
@@ -82,13 +82,13 @@ El nombre de todos los ficheros se genera automáticamente, **se recomienda no m
 
 * **_R & U Data Generation_** : _Grabar ficheros datos R & U_ = "X".
 * **_AGR Roles Data File_** : _Nombre del fichero_ Generado automáticamente. _Asignación de Roles a usuarios_
-* **_AGR Define Data File_** : _Nombre del fichero_ Generado automáticamente. _Definición de Roles_ 
+* **_AGR Define Data File_** : _Nombre del fichero_ Generado automáticamente. _Definición de Roles_
 * **_AGR 1251 Data File_** : _Nombre del fichero_ Generado automáticamente. _Autorizaciones_
 * **_AGR Flags Data File_** : _Nombre del fichero_ Generado automáticamente._Atributos de los Roles_
 * **_AGR Hier Data File_** :_Nombre del fichero_ Generado automáticamente. _Menú Roles_
 * **_AGR Auth.Profile Data File_** :_Nombre del fichero_ Generado automáticamente._Perfiles de Autorización_
 * **_AGR Prof Data File_** : _Nombre del fichero_ Generado automáticamente. _Perfiles_
-* **_AGR USOB Data File_** : _Nombre del fichero_ Generado automáticamente._Relación Transacción - Objeto de autorización_ 
+* **_AGR USOB Data File_** : _Nombre del fichero_ Generado automáticamente._Relación Transacción - Objeto de autorización_
 * **_USER General Data File_** : _Nombre del fichero_ Generado automáticamente. _Datos generales usuario_
 
 Al marcar el parámetro **_R & U Data Generation_** - en la actual versión se generan diez ficheros que son volcados en el _file system_ del servidor. El nombre de los ficheros es autogenerado. Se recomienda no modificar ningún nombre de fichero salvo que se quiera cambiar el directorio de grabación.
