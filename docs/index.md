@@ -24,7 +24,7 @@ Según alguna de las siguientes opciones:
 1. Creación del report **de forma manual:**
 
    1. Creación del report Z_IDR_SRYA_EXTRACTOR mediante la transacción SE38 o SE80
-   2. Copiar el código fuente del fichero -REPS Z_IDR_SRYA_EXTRACTOR.abap- ubicado en [/SRYA_extractor/objects/PROG/Z_IDR_SRYA_EXTRACTOR/](/objects/PROG/Z_IDR_SRYA_EXTRACTOR/REPS%20Z_IDR_SRYA_EXTRACTOR.abap)
+   2. Copiar el código fuente del fichero -REPS Z_IDR_SRYA_EXTRACTOR.abap- ubicado en [/SRYA_extractor/objects/PROG/Z_IDR_SRYA_EXTRACTOR/](/SRYA_extractor/blob/master/objects/PROG/Z_IDR_SRYA_EXTRACTOR/REPS%20Z_IDR_SRYA_EXTRACTOR.abap)
    3. Grabar y report , meterlo en una Orden de transporte
    4. Desplegarlo en el entorno en donde se vaya a realizar la extracción
 
@@ -63,7 +63,7 @@ Los requisitos para poder ejecutar el report son :
   Debido a lo heterogeneo y ocasionalmente voluminoso de la información a extraer, el report deposita la información extraída en un directorio del servidor de aplicación permitiendo así la ejecución del report en modo backgorund.
 
   El report se ejecuta directamente desde la **SE38**:
-![Pantalla de selección](/files/Z_IDR_SRYA_EXTRACTOR_DYNP1000V2.png)?  
+![Pantalla de selección](/SRYA_extractor/blob/master/files/Z_IDR_SRYA_EXTRACTOR_DYNP1000V2.png)?  
 
  **Pantalla de Selección**
 
