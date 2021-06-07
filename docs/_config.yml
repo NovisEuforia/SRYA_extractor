@@ -1,5 +1,5 @@
 title: SRYA extractor
-logo: /assets/img/logo.png
+logo: ../assets/img/logo.png
 description: IDR for the R&A framework
 google_analytics: 
 show_downloads: true
