@@ -24,7 +24,7 @@ Según alguna de las siguientes opciones:
 1. Creación del report **de forma manual:**
 
    1. Creación del report Z_IDR_SRYA_EXTRACTOR mediante la transacción SE38 o SE80
-   2. Copiar el código fuente del fichero -REPS Z_IDR_SRYA_EXTRACTOR.abap- ubicado en [/SRYA_extractor/objects/PROG/Z_IDR_SRYA_EXTRACTOR/](/SRYA_extractor/blob/master/objects/PROG/Z_IDR_SRYA_EXTRACTOR/REPS%20Z_IDR_SRYA_EXTRACTOR.abap)
+   2. Copiar el código fuente del fichero -REPS Z_IDR_SRYA_EXTRACTOR.abap- ubicado en [/SRYA_extractor/objects/PROG/Z_IDR_SRYA_EXTRACTOR/](https://github.com/NovisEuforia/SRYA_extractor/blob/master/objects/PROG/Z_IDR_SRYA_EXTRACTOR/REPS Z_IDR_SRYA_EXTRACTOR.abap)
    3. Grabar y report , meterlo en una Orden de transporte
    4. Desplegarlo en el entorno en donde se vaya a realizar la extracción
 
