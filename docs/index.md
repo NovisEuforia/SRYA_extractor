@@ -64,7 +64,7 @@ Los requisitos para poder ejecutar el report son :
 
   El report se ejecuta directamente desde la **SE38**:
   
-![Selection Screen](https://github.com/NovisEuforia/SRYA_extractor/blob/master/files/Z_IDR_SRYA_EXTRACTOR_DYNP1000V2.png)
+![Selection Screen](https://github.com/NovisEuforia/SRYA_extractor/blob/master/files/Z_IDR_SRYA_EXTRACTOR_DYNP1000V2.png?raw=true)
 
 <img src="https://github.com/NovisEuforia/SRYA_extractor/blob/master/files/Z_IDR_SRYA_EXTRACTOR_DYNP1000.png"/>
 
