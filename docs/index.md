@@ -66,7 +66,7 @@ Los requisitos para poder ejecutar el report son :
   
 ![Selection Screen](https://github.com/NovisEuforia/SRYA_extractor/blob/master/files/Z_IDR_SRYA_EXTRACTOR_DYNP1000V2.png)
 
-<img src="https://github.com/NovisEuforia/SRYA_extractor/blob/master/files/Z_IDR_SRYA_EXTRACTOR_DYNP1000V2.png"/>
+<img src="https://github.com/NovisEuforia/SRYA_extractor/blob/master/files/Z_IDR_SRYA_EXTRACTOR_DYNP1000.png"/>
 
  **Pantalla de Selección**
 
