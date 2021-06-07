@@ -66,8 +66,6 @@ Los requisitos para poder ejecutar el report son :
   
 ![Selection Screen](https://github.com/NovisEuforia/SRYA_extractor/blob/master/files/Z_IDR_SRYA_EXTRACTOR_DYNP1000V2.png?raw=true)
 
-<img src="https://github.com/NovisEuforia/SRYA_extractor/blob/master/files/Z_IDR_SRYA_EXTRACTOR_DYNP1000.png"/>
-
  **Pantalla de Selección**
 
  **1.Customer**:Información del cliente, solo tiene el parámetro obligatorio _Customer name_, este parámetro sirve para generar el nombre de los ficheros y poder ser identificados de forma automática en el sistema.
