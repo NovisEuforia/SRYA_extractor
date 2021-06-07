@@ -19,7 +19,7 @@ La ejecución más habitual será con los parámetros actuales tal y como los pr
 **Si se utiliza la anonimización de usuarios**, es obligatorio extraer la información en una sola ejecución del programa. Si no se utiliza esta, no hay problema en efectuar distintos lanzamientos para las distintas extracciones - uso, usuarios y roles, etc.-.
 
 ## Método de despliegue del report en el sistema
-Según cualquiera de las siguientes opciones:
+Según alguna de las siguientes opciones:
 
 1. Creación del report **de forma manual:**
 
