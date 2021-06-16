@@ -1,7 +1,0 @@
-NOVIS        T V4H        1   0   2   0   0   0   0   0   0   2  754   .  0   0   0   0   0 100
-#U
-#/1/                          A   G   -   C   R   7   T   -   Z RELE EX.  _   _   _   _   _ CLI
-S4H f 0000 20210602180102 nv-demo-s4       s4hadm
-S4H e 0000 20210602180105 nv-demo-s4       s4hadm
-V4H.100 < 0000 20210602180107 nv-demo-s4       s4hadm
-S4H.100 E 0000 20210602180107 nv-demo-s4       s4hadm
