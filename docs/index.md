@@ -1,6 +1,7 @@
 # SRYA_extractor V2.0
 SRYA_extractor : IDR Roles y autorizaciones.
 
+![NovisEuforia](https://github.com/NovisEuforia/SRYA_extractor/blob/master/assests/img/logo.jpg?raw=true)
 
 **Extractor para el análisis de roles y Segregación funciones**. Además de extraer el uso del sistema por parte de los usuarios, extrae información de los roles del sistema, su asignación a los usuarios e información general de los usuarios.  
 
