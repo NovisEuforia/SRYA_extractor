@@ -27,7 +27,7 @@
 *              https://www.gnu.org/licenses/agpl-3.0.txt               *
 *                                                                      *
 *&---------------------------------------------------------------------*
-REPORT z_idr_srya_extractor_vid.
+REPORT z_idr_srya_extractor.
 ************************************************************************
 *  2020.03.19 : SRYA EXTRACTOR V1.0 : First Release
 *  2020.04.03 : SRYA EXTRACTOR V1.1 : CSV generation
@@ -727,8 +727,8 @@ AT SELECTION-SCREEN.
   l_len_prev_custo = strlen( p_custo ).
 
   SELECT SINGLE * FROM opsystem INTO lw_opsystem WHERE opsys = sy-opsys.
-  translate lw_opsystem-filesys to upper case.
 
+  lw_opsystem-filesys = to_upper( lw_opsystem-filesys ).
 
   IF lw_opsystem-filesys EQ l_lifesWin.
     LOOP AT lt_files INTO lw_file.
@@ -881,6 +881,7 @@ INITIALIZATION.
   SELECT SINGLE * FROM opsystem INTO lw_opsystem WHERE opsys = sy-opsys.
 
   lw_opsystem-filesys = to_upper( lw_opsystem-filesys ).
+
   IF lw_opsystem-filesys EQ l_lifesWin.
     LOOP AT lt_files INTO lw_file.
       CREATE OBJECT lc_winpath
