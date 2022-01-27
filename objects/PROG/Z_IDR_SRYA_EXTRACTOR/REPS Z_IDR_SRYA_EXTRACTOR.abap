@@ -7,7 +7,7 @@
 *                                                                      *
 *  Z_IDR_SRYA_EXTRACTOR : IDR Scan Roles y Autorizaciones              *
 *                                                                      *
-*  Copyright (C) 2020 Novis Euforia                                    *
+*  Copyright (C) 2020-2022 Novis Euforia                                    *
 *                                                                      *
 *  This program is free software: you can redistribute it and/or modi- *
 *  fy it under the terms of the GNU Affero General Public License as   *
@@ -42,6 +42,7 @@ REPORT z_idr_srya_extractor.
 *  2021.05.31 : SRYA EXTRACTOR V1.9 : Use data Collect
 *  2021.06.02 : SRYA EXTRACTOR V2.0 : New Data extraction -USO*-
 *  2021.07.12 : SRYA EXTRACTOR V2.1a: Windows-based paths issue Fix
+*  2021.12.02 : SRYA EXTRACTOR V2.1b: User type and email address added to user file
 ************************************************************************
 
 
@@ -69,6 +70,8 @@ TYPES: BEGIN OF t_trxs,
 TYPES:BEGIN OF t_user,
         mandt         TYPE symandt,
         bname         TYPE xubname,
+        ustyp         TYPE xuustyp,
+        smtp_addr     TYPE ad_smtpadr,
         persnum       TYPE ad_persnum,
         name_last     TYPE ad_namelas,
         name_text     TYPE ad_namtext,
@@ -92,6 +95,7 @@ TYPES:BEGIN OF t_user,
       END OF t_user.
 TYPES: BEGIN OF t_ulock,
          bname TYPE xubname,
+         ustyp TYPE xuustyp,
          gltgv TYPE xugltgv,
          gltgb TYPE xugltgb,
          trdat TYPE xuldate,
@@ -113,6 +117,26 @@ TYPES: BEGIN OF t_userlic,
          utyptext    TYPE utyptext,
          sort        TYPE rsuvmsort,
        END OF t_userlic.
+
+
+TYPES: BEGIN OF t_tobj,
+         objct       TYPE xuobject,
+         fiel1       TYPE xufield,
+         fiel2       TYPE xufield,
+         fiel3       TYPE xufield,
+         fiel4       TYPE xufield,
+         fiel5       TYPE xufield,
+         fiel6       TYPE xufield,
+         fiel7       TYPE xufield,
+         fiel8       TYPE xufield,
+         fiel9       TYPE xufield,
+         fiel0       TYPE xufield,
+         oclss       TYPE xuobjclass,
+         bname       TYPE xuser,
+         fblock      TYPE xufblock,
+         conversion  TYPE convflag,
+       END OF t_tobj.
+
 
 TYPES: BEGIN OF t_file,
          file TYPE  localfile,
@@ -229,6 +253,8 @@ DATA: lw_agr_user   TYPE agr_users,
       lw_userlic    TYPE t_userlic,
       lw_usr06      TYPE usr06,
       lt_usr06      TYPE STANDARD TABLE OF usr06,
+      lw_adr6       TYPE adr6,
+      lt_adr6       TYPE STANDARD TABLE OF adr6,
       lw_tutypa     TYPE tutypa,
       lt_tutypa     TYPE STANDARD TABLE OF tutypa,
       lw_tutypnow   TYPE tutypnow,
@@ -247,6 +273,14 @@ DATA: lw_agr_user   TYPE agr_users,
       lt_agr_hier   TYPE STANDARD TABLE OF agr_hier,
       lw_df14vd     TYPE df14vd,
       lt_df14vd     TYPE STANDARD TABLE OF df14vd.
+DATA:
+      lt_tobj       TYPE STANDARD TABLE OF tobj,
+      lw_tobj       TYPE tobj,
+      lt_e070       TYPE STANDARD TABLE OF e070,
+      lw_e070       TYPE e070,
+      lt_devaccess  TYPE STANDARD TABLE OF devaccess,
+      lw_devaccess  TYPE devaccess,
+      lv_date       LIKE sy-datum.
 DATA: line_file01   TYPE string,
       pname(80),
       l_perios_last TYPE swncdatum.
@@ -286,6 +320,9 @@ DATA: lc_ushaker           TYPE REF TO lcl_ushaker,
       l_nameusertypes      TYPE string,
       l_nameuseralias      TYPE string,
       l_nameuserlic        TYPE string,
+      l_nametobj           TYPE string,
+      l_namee070           TYPE string,
+      l_namedevaccess      TYPE string,
       l_prev_custo         TYPE text12.
 DATA: l_pathprefixlength    TYPE i,
       l_len_prev_custo      TYPE i,
@@ -332,7 +369,10 @@ SELECTION-SCREEN BEGIN OF BLOCK gen WITH FRAME TITLE title2.
               p_fileg1 TYPE rlgrap-filename  DEFAULT '/tmp/test06.txt',
               p_fileg2 TYPE rlgrap-filename  DEFAULT '/tmp/test06b.txt',
               p_fileg3 TYPE rlgrap-filename  DEFAULT '/tmp/test06c.txt',
-              p_fileg4 TYPE rlgrap-filename  DEFAULT '/tmp/test06c.txt'.
+              p_fileg4 TYPE rlgrap-filename  DEFAULT '/tmp/test06c.txt',
+              p_fileg5 TYPE rlgrap-filename  DEFAULT '/tmp/test06d.txt',
+              p_fileg6 TYPE rlgrap-filename  DEFAULT '/tmp/test06e.txt',
+              p_fileg7 TYPE rlgrap-filename  DEFAULT '/tmp/test067.txt'.
 SELECTION-SCREEN END OF BLOCK gen.
 SELECTION-SCREEN BEGIN OF BLOCK uan WITH FRAME TITLE title3.
   PARAMETERS: p_ushake TYPE flag DEFAULT '',
@@ -719,6 +759,75 @@ AT SELECTION-SCREEN.
         l_pathprefix = l_newpath.
         CONCATENATE l_newpath l_fileprefix l_nameuserlic INTO <fs_fileline>-file.
         p_filer7 = <fs_fileline>-file.
+      WHEN 17.
+        IF p_custo = l_prev_custo.
+          SEARCH p_fileg5 FOR p_custo.
+        ELSE.
+          IF l_prev_custo IS INITIAL.
+            SEARCH p_fileg5 FOR l_sysclient.
+          ELSE.
+            SEARCH p_fileg5 FOR l_prev_custo.
+            l_len_prev_custo = l_len_prev_custo + sy-fdpos.
+            CONCATENATE p_fileg5(sy-fdpos) p_custo p_fileg5+l_len_prev_custo INTO p_fileg5.
+            <fs_fileline>-file = p_fileg5.
+          ENDIF.
+        ENDIF.
+        SEARCH p_fileg5 FOR p_custo.
+        IF sy-subrc = 0.
+          SEARCH p_fileg5 FOR l_fileprefix.
+        ELSE.
+          SEARCH p_fileg5 FOR l_sysclient.
+        ENDIF.
+        l_newpath = p_fileg5(sy-fdpos).
+        l_pathprefix = l_newpath.
+        CONCATENATE l_newpath l_fileprefix l_nametobj INTO <fs_fileline>-file.
+        p_fileg5 = <fs_fileline>-file.
+       WHEN 18.
+        IF p_custo = l_prev_custo.
+          SEARCH p_fileg6 FOR p_custo.
+        ELSE.
+          IF l_prev_custo IS INITIAL.
+            SEARCH p_fileg6 FOR l_sysclient.
+          ELSE.
+            SEARCH p_fileg6 FOR l_prev_custo.
+            l_len_prev_custo = l_len_prev_custo + sy-fdpos.
+            CONCATENATE p_fileg6(sy-fdpos) p_custo p_fileg6+l_len_prev_custo INTO p_fileg6.
+            <fs_fileline>-file = p_fileg6.
+          ENDIF.
+        ENDIF.
+        SEARCH p_fileg6 FOR p_custo.
+        IF sy-subrc = 0.
+          SEARCH p_fileg6 FOR l_fileprefix.
+        ELSE.
+          SEARCH p_fileg6 FOR l_sysclient.
+        ENDIF.
+        l_newpath = p_fileg6(sy-fdpos).
+        l_pathprefix = l_newpath.
+        CONCATENATE l_newpath l_fileprefix l_namee070 INTO <fs_fileline>-file.
+        p_fileg6 = <fs_fileline>-file.
+       WHEN 19.
+        IF p_custo = l_prev_custo.
+          SEARCH p_fileg7 FOR p_custo.
+        ELSE.
+          IF l_prev_custo IS INITIAL.
+            SEARCH p_fileg7 FOR l_sysclient.
+          ELSE.
+            SEARCH p_fileg7 FOR l_prev_custo.
+            l_len_prev_custo = l_len_prev_custo + sy-fdpos.
+            CONCATENATE p_fileg7(sy-fdpos) p_custo p_fileg7+l_len_prev_custo INTO p_fileg7.
+            <fs_fileline>-file = p_fileg7.
+          ENDIF.
+        ENDIF.
+        SEARCH p_fileg7 FOR p_custo.
+        IF sy-subrc = 0.
+          SEARCH p_fileg7 FOR l_fileprefix.
+        ELSE.
+          SEARCH p_fileg7 FOR l_sysclient.
+        ENDIF.
+        l_newpath = p_fileg7(sy-fdpos).
+        l_pathprefix = l_newpath.
+        CONCATENATE l_newpath l_fileprefix l_namedevaccess INTO <fs_fileline>-file.
+        p_fileg7 = <fs_fileline>-file.
       WHEN OTHERS.
     ENDCASE.
   ENDLOOP.
@@ -768,6 +877,12 @@ AT SELECTION-SCREEN.
           p_filer6 = lc_winpath->get_winpath( ).
         WHEN 16.
           p_filer7 = lc_winpath->get_winpath( ).
+        WHEN 17.
+          p_fileg5 = lc_winpath->get_winpath( ).
+        WHEN 18.
+          p_fileg6 = lc_winpath->get_winpath( ).
+        WHEN 19.
+          p_fileg7 = lc_winpath->get_winpath( ).
       ENDCASE.
       FREE lc_winpath.
     ENDLOOP.
@@ -813,6 +928,9 @@ INITIALIZATION.
   %_P_USHAKE_%_app_%-text = 'User Alias Generation'.
   %_P_LICENS_%_app_%-text = 'License Data Generation'.
   %_P_FILER7_%_app_%-text = 'User License Data File'.
+  %_P_FILEG5_%_app_%-text = 'Auth. Objects Data File'.
+  %_P_FILEG6_%_app_%-text = 'Trans. Request Data File'.
+  %_P_FILEG7_%_app_%-text = 'Developers Reg. Data File'.
 
   title0 = 'Use'.
   title1 = 'Roles & Users'.
@@ -844,6 +962,9 @@ INITIALIZATION.
   CONCATENATE '_USER_TYPES'         '_' s_ts '.csv'    INTO l_nameusertypes.
   CONCATENATE '_USERS_ALIAS'        '_' s_ts '.csv'    INTO l_nameuseralias.
   CONCATENATE '_USERS_LIC'          '_' s_ts '.csv'    INTO l_nameuserlic.
+  CONCATENATE '_AUTH_TOBJ'          '_' s_ts '.csv'    INTO l_nametobj.
+  CONCATENATE '_TRANS_E070'         '_' s_ts '.csv'    INTO l_namee070.
+  CONCATENATE '_DEV_DEVACCESS'      '_' s_ts '.csv'    INTO l_namedevaccess.
 
   CONCATENATE    l_pathprefix l_fileprefix l_nameuse            INTO p_file.
   lw_file-file = p_file.   APPEND lw_file TO lt_files.
@@ -877,6 +998,12 @@ INITIALIZATION.
   lw_file-file = p_filer6. APPEND lw_file TO lt_files.
   CONCATENATE    l_pathprefix l_fileprefix l_nameuserlic        INTO p_filer7.
   lw_file-file = p_filer7. APPEND lw_file TO lt_files.
+  CONCATENATE    l_pathprefix l_fileprefix l_nametobj           INTO p_fileg5.
+  lw_file-file = p_fileg5. APPEND lw_file TO lt_files.
+  CONCATENATE    l_pathprefix l_fileprefix l_namee070           INTO p_fileg6.
+  lw_file-file = p_fileg6. APPEND lw_file TO lt_files.
+  CONCATENATE    l_pathprefix l_fileprefix l_namedevaccess      INTO p_fileg7.
+  lw_file-file = p_fileg7. APPEND lw_file TO lt_files.
 
   SELECT SINGLE * FROM opsystem INTO lw_opsystem WHERE opsys = sy-opsys.
 
@@ -920,11 +1047,17 @@ INITIALIZATION.
           p_filer6 = lc_winpath->get_winpath( ).
         WHEN 16.
           p_filer7 = lc_winpath->get_winpath( ).
+        WHEN 17.
+          p_fileg5 = lc_winpath->get_winpath( ).
+        WHEN 18.
+          p_fileg6 = lc_winpath->get_winpath( ).
+        WHEN 19.
+          p_fileg7 = lc_winpath->get_winpath( ).
       ENDCASE.
       FREE lc_winpath.
     ENDLOOP.
   ENDIF.
-  l_instr = 'Copyright © 2020 Novis Euforia'.
+  l_instr = 'Copyright © 2020-2022 Novis Euforia'.
 *---------------------------------------------------------------------
 START-OF-SELECTION.
 *---------------------------------------------------------------------
@@ -1051,10 +1184,11 @@ START-OF-SELECTION.
   ENDIF.
   IF p_role IS NOT INITIAL.
     SELECT * FROM v_username INTO TABLE lt_username.
-    SELECT  bname gltgv  gltgb uflag trdat ltime  FROM usr02  INTO CORRESPONDING FIELDS OF TABLE lt_ulock.
+    SELECT  bname ustyp gltgv  gltgb uflag trdat ltime  FROM usr02  INTO CORRESPONDING FIELDS OF TABLE lt_ulock.
     SELECT * FROM usr21 INTO TABLE lt_usr21.
     SELECT * FROM v_addr_usr INTO TABLE lt_addr.
     SELECT * FROM devaccess INTO TABLE lt_dev.
+    SELECT * FROM ADR6 INTO TABLE lt_adr6.
     LOOP AT lt_ulock INTO lw_ulock.
       READ TABLE lt_username INTO lw_username WITH KEY bname = lw_ulock-bname.
       IF sy-subrc <> 0 OR p_ushake = 'X'.
@@ -1077,8 +1211,11 @@ START-OF-SELECTION.
       IF sy-subrc = 0.
         lw_user-developer = 'X'.
       ENDIF.
-      lw_user-mandt         = sy-mandt.
+      READ TABLE lt_adr6 INTO lw_adr6 WITH KEY addrnumber = lw_usr21-addrnumber persnumber = lw_usr21-persnumber.
+      lw_user-mandt          = sy-mandt.
       lw_user-bname          = lw_ulock-bname.
+      lw_user-ustyp          = lw_ulock-ustyp.
+      lw_user-smtp_addr      = lw_adr6-smtp_addr.
       lw_user-Persnum        = lw_username-persnumber.
       lw_user-name_last      = lw_username-name_last.
       lw_user-name_text      = lw_username-name_text.
@@ -1101,17 +1238,17 @@ START-OF-SELECTION.
         CALL METHOD lc_ushaker->get_alias EXPORTING bname = lw_user-bname IMPORTING alias = lw_user-bname.
       ENDIF.
       APPEND lw_user TO lt_user.
-      CONCATENATE: lw_user-mandt        ';' lw_user-bname     ';' lw_user-Persnum       ';'
+      CONCATENATE: lw_user-mandt        ';' lw_user-bname     ';' lw_user-ustyp         ';' lw_user-Persnum       ';'
                    lw_user-name_last    ';' lw_user-name_text ';' lw_user-mc_name_first ';'
                    lw_user-mc_name_last ';' lw_user-gltgv     ';' lw_user-gltgb        ';'
-                   lw_user-trdat        ';' lw_user-ltime     ';' lw_user-uflag         ';'
+                   lw_user-trdat        ';' lw_user-ltime     ';' lw_user-uflag         ';' lw_adr6-smtp_addr     ';'
                    lw_user-addrnumber   ';' lw_user-idadtype  ';' lw_user-partner       ';'
                    lw_user-bptype       ';' lw_user-bpkind    ';' lw_user-bpgroup       ';'
                    lw_user-organization ';' lw_user-orgname   ';' lw_user-country       ';'
                    lw_user-developer
                    INTO lw_line.
       APPEND lw_line TO lt_line.
-      CLEAR: lw_username, lw_ulock ,lw_usr21, lw_but000, lw_but000a,lw_addr, lw_dev.
+      CLEAR: lw_username, lw_ulock ,lw_usr21, lw_but000, lw_but000a,lw_addr, lw_dev, lw_adr6.
     ENDLOOP.
     CLEAR: lt_username[], lt_ulock[] ,lt_usr21[], lt_addr[], lt_dev[].
 
@@ -1490,6 +1627,12 @@ START-OF-SELECTION.
   IF p_gene IS NOT INITIAL.
     SELECT * FROM info_tran  INTO TABLE lt_info_tran.
     SELECT * FROM tstcv INTO TABLE lt_tstcv WHERE sprsl = p_spras.
+    SELECT * FROM tobj INTO TABLE lt_tobj.
+    SELECT * FROM devaccess INTO TABLE lt_devaccess.
+
+    lv_date = sy-datum - 365.
+    SELECT * FROM e070 INTO TABLE lt_e070 WHERE strkorr <> space AND as4date >= lv_date AND trfunction IN ('K', 'S').
+
 
     OPEN DATASET p_fileg1 FOR OUTPUT IN TEXT MODE ENCODING DEFAULT.
     IF sy-subrc NE 0.
@@ -1625,7 +1768,101 @@ START-OF-SELECTION.
     CLOSE DATASET p_fileg4.
     CLEAR lt_tutyp[].
     WRITE: / 'File' ,p_fileg4 ,  ' has been generated'.
+
+
+
+    OPEN DATASET p_fileg5 FOR OUTPUT IN TEXT MODE ENCODING DEFAULT.
+    IF sy-subrc NE 0.
+      CONCATENATE 'Error al abrir el fichero ' p_fileg5 INTO l_errmsg RESPECTING BLANKS.
+      MESSAGE l_errmsg TYPE 'E'.
+    ENDIF.
+
+    LOOP AT lt_tobj INTO lw_tobj.
+      CONCATENATE: lw_tobj-objct  ';' lw_tobj-fiel1 ';' lw_tobj-fiel2 ';' lw_tobj-fiel3 ';' lw_tobj-fiel4
+                   ';' lw_tobj-fiel5 ';' lw_tobj-fiel6 ';' lw_tobj-fiel7 ';' lw_tobj-fiel8 ';' lw_tobj-fiel9
+                   ';' lw_tobj-fiel0 ';' lw_tobj-oclss ';' lw_tobj-bname ';' lw_tobj-fblock
+                   lw_tobj-conversion INTO lw_line.
+      CONDENSE lw_line.
+      CALL METHOD cl_abap_container_utilities=>fill_container_c
+        EXPORTING
+          im_value               = lw_line
+        IMPORTING
+          ex_container           = line_file01
+        EXCEPTIONS
+          illegal_parameter_type = 1
+          OTHERS                 = 2.
+      IF sy-subrc <> 0.
+        CONTINUE.
+      ENDIF.
+      TRANSFER line_file01 TO p_fileg5.
+      CLEAR: line_file01, lw_line.
+    ENDLOOP.
+    CLOSE DATASET p_fileg5.
+    CLEAR lt_tobj[].
+    WRITE: / 'File' ,p_fileg5 ,  ' has been generated'.
+
+    OPEN DATASET p_fileg6 FOR OUTPUT IN TEXT MODE ENCODING DEFAULT.
+    IF sy-subrc NE 0.
+      CONCATENATE 'Error al abrir el fichero ' p_fileg6 INTO l_errmsg RESPECTING BLANKS.
+      MESSAGE l_errmsg TYPE 'E'.
+    ENDIF.
+
+    LOOP AT lt_e070 INTO lw_e070.
+      CONCATENATE: lw_e070-trkorr  ';' lw_e070-trfunction ';' lw_e070-trstatus ';' lw_e070-tarsystem ';' lw_e070-korrdev
+                   ';' lw_e070-as4user ';' lw_e070-as4date ';' lw_e070-as4time ';' lw_e070-strkorr INTO lw_line.
+      CONDENSE lw_line.
+      CALL METHOD cl_abap_container_utilities=>fill_container_c
+        EXPORTING
+          im_value               = lw_line
+        IMPORTING
+          ex_container           = line_file01
+        EXCEPTIONS
+          illegal_parameter_type = 1
+          OTHERS                 = 2.
+      IF sy-subrc <> 0.
+        CONTINUE.
+      ENDIF.
+      TRANSFER line_file01 TO p_fileg6.
+      CLEAR: line_file01, lw_line.
+    ENDLOOP.
+    CLOSE DATASET p_fileg6.
+    CLEAR lt_e070[].
+    WRITE: / 'File' ,p_fileg6 ,  ' has been generated'.
+
+
+
+    OPEN DATASET p_fileg7 FOR OUTPUT IN TEXT MODE ENCODING DEFAULT.
+    IF sy-subrc NE 0.
+      CONCATENATE 'Error al abrir el fichero ' p_fileg6 INTO l_errmsg RESPECTING BLANKS.
+      MESSAGE l_errmsg TYPE 'E'.
+    ENDIF.
+
+    LOOP AT lt_devaccess INTO lw_devaccess.
+      CONCATENATE: lw_devaccess-uname  ';' lw_devaccess-accesskey INTO lw_line.
+      CONDENSE lw_line.
+      CALL METHOD cl_abap_container_utilities=>fill_container_c
+        EXPORTING
+          im_value               = lw_line
+        IMPORTING
+          ex_container           = line_file01
+        EXCEPTIONS
+          illegal_parameter_type = 1
+          OTHERS                 = 2.
+      IF sy-subrc <> 0.
+        CONTINUE.
+      ENDIF.
+      TRANSFER line_file01 TO p_fileg7.
+      CLEAR: line_file01, lw_line.
+    ENDLOOP.
+    CLOSE DATASET p_fileg7.
+    CLEAR lt_devaccess[].
+    WRITE: / 'File' ,p_fileg7 ,  ' has been generated'.
+
+
+
+
   ENDIF.
+
 *---------------------------------------------------------------------
 END-of-SELECTION.
 *---------------------------------------------------------------------
