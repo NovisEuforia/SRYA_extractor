@@ -42,9 +42,7 @@ REPORT z_idr_srya_extractor.
 *  2021.05.31 : SRYA EXTRACTOR V1.9 : Use data Collect
 *  2021.06.02 : SRYA EXTRACTOR V2.0 : New Data extraction -USO*-
 *  2021.07.12 : SRYA EXTRACTOR V2.1a: Windows-based paths issue Fix
-*  2021.12.02 : SRYA EXTRACTOR V2.1b: User type and email address added to user
-*  file
-*  2022.02.09 : SRYA EXTRACTOR V2.21: Add new fields to some structures
+*  2021.12.02 : SRYA EXTRACTOR V2.1b: User type and email address added to user file
 ************************************************************************
 
 
@@ -1782,7 +1780,8 @@ START-OF-SELECTION.
     LOOP AT lt_tobj INTO lw_tobj.
       CONCATENATE: lw_tobj-objct  ';' lw_tobj-fiel1 ';' lw_tobj-fiel2 ';' lw_tobj-fiel3 ';' lw_tobj-fiel4
                    ';' lw_tobj-fiel5 ';' lw_tobj-fiel6 ';' lw_tobj-fiel7 ';' lw_tobj-fiel8 ';' lw_tobj-fiel9
-                   ';' lw_tobj-fiel0 ';' lw_tobj-oclss ';' lw_tobj-bname ';' lw_tobj-fblock ';' lw_tobj-conversion INTO lw_line.
+                   ';' lw_tobj-fiel0 ';' lw_tobj-oclss ';' lw_tobj-bname ';' lw_tobj-fblock
+                   lw_tobj-conversion INTO lw_line.
       CONDENSE lw_line.
       CALL METHOD cl_abap_container_utilities=>fill_container_c
         EXPORTING
